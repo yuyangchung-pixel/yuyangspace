@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>拍賣 APP CMS 版位對照</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky index rail on desktop, single column on phone; each slot = header row + screenshot */
+:root{
+  --bg:#f6f5f3; --surface:#ffffff; --fg:#1f1b18; --muted:#6d655f; --line:#e6e1dc;
+  --accent:#e2471f; --accent-soft:#fdebe4; --shot-bg:#f1efec;
+  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171412; --surface:#211d1a; --fg:#efe9e4; --muted:#a59b93; --line:#352f2b;
+  --accent:#ff7a52; --accent-soft:#3a2219; --shot-bg:#2a2521; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171412; --surface:#211d1a; --fg:#efe9e4; --muted:#a59b93; --line:#352f2b;
+  --accent:#ff7a52; --accent-soft:#3a2219; --shot-bg:#2a2521; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.65}
+.wrap{max-width:1180px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;gap:8px;margin-bottom:32px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+h1{margin:0;font-size:clamp(26px,4vw,36px);line-height:1.25;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:62ch}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;align-items:start}
+nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);display:grid;gap:2px}
+nav a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:14px;display:flex;gap:10px}
+nav a span{font-family:var(--font-mono);font-size:12px;color:var(--muted);opacity:.7;padding-top:2px}
+nav a:hover,nav a:focus-visible{background:var(--accent-soft);color:var(--fg);outline:none}
+main{display:grid;gap:20px;min-width:0}
+.slot{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:20px}
+.head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-start;justify-content:space-between;padding:18px 20px}
+.title{display:grid;gap:4px;min-width:0}
+h2{margin:0;font-size:19px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:500}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.meta b{font-weight:500;color:var(--fg)}
+.note{margin:6px 0 0;font-size:14px;color:var(--fg);background:var(--accent-soft);padding:6px 10px;border-radius:6px;width:fit-content;max-width:100%}
+.open{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;
+  border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+.open:hover,.open:focus-visible{background:var(--accent);color:#fff;outline:none}
+figure{margin:0;background:var(--shot-bg);border-top:1px solid var(--line);padding:16px;display:flex;justify-content:center}
+figure img{display:block;max-width:100%;height:auto;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.noshot{border-top:1px dashed var(--line);padding:14px 20px;color:var(--muted);font-size:14px}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+@media (max-width:820px){.layout{grid-template-columns:1fr}nav{position:static;display:flex;flex-wrap:wrap;gap:6px}
+  nav a{border:1px solid var(--line);padding:4px 10px}nav a span{display:none}}
+body{margin:0}img{max-width:100%}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">iOPEN MALL ・ 拍賣 APP CMS</div>
+  <h1>拍賣 APP CMS 版位對照</h1>
+  <p>每個首頁版位的 CMS 排程入口和前台位置示意。點「開啟 CMS」進入該模組的排程列表（需在公司網路或 VPN 內才能開啟）。</p>
+</header>
+
+<div class="layout">
+<nav aria-label="版位目錄">
+  <a href="#teeth"><span>01</span>牙齒</a>
+  <a href="#hero"><span>02</span>大包</a>
+  <a href="#anydoor"><span>03</span>小福</a>
+  <a href="#flashnews"><span>04</span>跑馬燈</a>
+  <a href="#img12"><span>05</span>繃帶＋12小圖</a>
+  <a href="#daily"><span>06</span>每日好物</a>
+  <a href="#hotsale"><span>07</span>最佳熱銷</a>
+  <a href="#floor"><span>08</span>首頁樓層</a>
+  <a href="#oversea"><span>09</span>跨境</a>
+  <a href="#star"><span>10</span>主打星</a>
+  <a href="#crazy"><span>11</span>crazy ad</a>
+  <a href="#watermark"><span>12</span>浮水印</a>
+</nav>
+
+<main>
+<section class="slot" id="teeth">
+  <div class="head"><div class="title">
+    <h2><span class="n">01</span>牙齒</h2>
+    <div class="meta"><span>module <b>auction_fp_teeth_module</b></span><span>service myauction</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;publish_status_filter%5B0%5D=3&amp;module_id=auction_fp_teeth_module&amp;data_key=iOM&amp;definition_seq_id=3664&amp;cms_mode=public,edit">開啟 CMS ↗</a></div>
+  <figure><img src="img/teeth.jpg" width="705" height="124" alt="搜尋列下方的文字導覽列：超值優惠、超人氣賣家、點數折抵等" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="hero">
+  <div class="head"><div class="title">
+    <h2><span class="n">02</span>大包</h2>
+    <div class="meta"><span>module <b>fp_hero_2026</b></span><span>service myauction</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;module_id=fp_hero_2026&amp;data_key=iOM&amp;definition_seq_id=3663&amp;cms_ts=1785816000&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <figure><img src="img/hero.jpg" width="1246" height="531" alt="首頁主視覺輪播大圖，左側為分類總覽" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="anydoor">
+  <div class="head"><div class="title">
+    <h2><span class="n">03</span>小福</h2>
+    <div class="meta"><span>module <b>app_AnyDoor</b></span><span>service auctionapp</span></div>
+    <p class="note">大版順序：1 3 5 7 9 11 2 4 6 8 10 12 ／ 小版順序：1 3 5 7 9 11 ／ 2 4 6 8 10 12</p>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=auctionapp&amp;publish_status_filter%5B0%5D=3&amp;module_id=app_AnyDoor&amp;data_key=iOM&amp;definition_seq_id=2546">開啟 CMS ↗</a></div>
+  <figure><img src="img/anydoor.jpg" width="1249" height="148" alt="12 個圖示入口：雙12盛典、優惠攻略、1元起購等" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="flashnews">
+  <div class="head"><div class="title">
+    <h2><span class="n">04</span>跑馬燈</h2>
+    <div class="meta"><span>module <b>auction_lp_flashnews_module</b></span><span>service auctionapp</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=auctionapp&amp;publish_status_filter%5B0%5D=3&amp;module_id=auction_lp_flashnews_module&amp;data_key=iOM&amp;definition_seq_id=2629">開啟 CMS ↗</a></div>
+  <figure><img src="img/flashnews.jpg" width="505" height="76" alt="HOT 跑馬燈文字列" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="img12">
+  <div class="head"><div class="title">
+    <h2><span class="n">05</span>繃帶＋12小圖</h2>
+    <div class="meta"><span>module <b>fp_12img_1</b></span><span>data_key d1</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;publish_status_filter%5B0%5D=3&amp;module_id=fp_12img_1&amp;data_key=d1&amp;definition_seq_id=3694&amp;cms_mode=public,edit">開啟 CMS ↗</a></div>
+  <figure><img src="img/12img.jpg" width="1273" height="280" alt="上方繃帶標題條，下方橫幅與熱搜小圖" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="daily">
+  <div class="head"><div class="title">
+    <h2><span class="n">06</span>每日好物</h2>
+    <div class="meta"><span>module <b>iom_promo_hourly</b></span><span>data_key 20261110</span></div>
+    <p class="note">data_key 要改成日期，每次修改一個日期</p>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;module_id=iom_promo_hourly&amp;data_key=20261110&amp;definition_seq_id=3718&amp;cms_ts=1789626300&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <figure><img src="img/flashsale.jpg" width="1600" height="527" alt="熱銷搶搶滾 FLASH SALE 商品輪播" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="hotsale">
+  <div class="head"><div class="title">
+    <h2><span class="n">07</span>最佳熱銷</h2>
+    <div class="meta"><span>module <b>iom_fp_item</b></span><span>data_key iom_hotsale</span></div>
+    <p class="note">位置在每日好物下方</p>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;module_id=iom_fp_item&amp;data_key=iom_hotsale&amp;definition_seq_id=3708&amp;cms_ts=1789007100&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <figure><img src="img/flashsale.jpg" width="1600" height="527" alt="商品輪播示意" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="floor">
+  <div class="head"><div class="title">
+    <h2><span class="n">08</span>首頁樓層</h2>
+    <div class="meta"><span>module <b>d_fp_general_1</b></span><span>service myauction</span></div>
+    <p class="note">共 6 組，依序出現在首頁。每組為 1 大 3 小＋12 商品宮格</p>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;publish_status_filter%5B0%5D=3&amp;module_id=d_fp_general_1&amp;data_key=iOM&amp;definition_seq_id=3690&amp;cms_mode=public,edit">開啟 CMS ↗</a></div>
+  <figure><img src="img/floor.jpg" width="1600" height="752" alt="樓層示意：左側 Banner、右側大商品宮格，下方商品宮格不上就不顯示" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="oversea">
+  <div class="head"><div class="title">
+    <h2><span class="n">09</span>跨境</h2>
+    <div class="meta"><span>module <b>iom_fp_oversea</b></span><span>service myauction</span></div>
+    <p class="note">下方商品是 API 拉的；上方紅框沒上稿，整個模組都不會出現</p>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;publish_status_filter%5B0%5D=3&amp;module_id=iom_fp_oversea&amp;data_key=iOM&amp;definition_seq_id=3696&amp;cms_mode=public,edit">開啟 CMS ↗</a></div>
+  <figure><img src="img/oversea.jpg" width="1600" height="825" alt="日本代購樓層，上方紅框為 CMS 上稿區" loading="lazy"></figure>
+</section>
+
+<section class="slot" id="star">
+  <div class="head"><div class="title">
+    <h2><span class="n">10</span>主打星</h2>
+    <div class="meta"><span>module <b>app_auc_landing_seller</b></span><span>service auctionapp</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=auctionapp&amp;module_id=app_auc_landing_seller&amp;data_key=iOM&amp;definition_seq_id=1621">開啟 CMS ↗</a></div>
+  <div class="noshot">尚無示意圖</div>
+</section>
+
+<section class="slot" id="crazy">
+  <div class="head"><div class="title">
+    <h2><span class="n">11</span>crazy ad</h2>
+    <div class="meta"><span>module <b>d_pc_crazy_ad</b></span><span>property auction</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction&amp;ccode=tw&amp;service=myauction&amp;module_id=d_pc_crazy_ad&amp;data_key=iOM&amp;definition_seq_id=3666&amp;cms_ts=1785814800&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <div class="noshot">尚無示意圖</div>
+</section>
+
+<section class="slot" id="watermark">
+  <div class="head"><div class="title">
+    <h2><span class="n">12</span>浮水印</h2>
+    <div class="meta"><span>module <b>aucton_watermark_1</b></span><span>property auction</span></div>
+  </div><a class="open" target="_blank" rel="noopener" href="https://mall-cmsfe.paas.ec.yahoo.com:4443/gui/SchedulingModuleList?property=auction&amp;ccode=tw&amp;service=myauction&amp;module_id=aucton_watermark_1&amp;data_key=iOM&amp;definition_seq_id=3667&amp;cms_ts=1785814800&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <figure><img src="img/watermark.jpg" width="550" height="313" alt="畫面右下角浮動的「今日免運」浮水印" loading="lazy"></figure>
+</section>
+
+<footer>依「拍賣_APP_CMS_匯入用書籤」整理，共 12 個版位。</footer>
+</main>
+</div>
+</div>
+
+</body>
+</html>
