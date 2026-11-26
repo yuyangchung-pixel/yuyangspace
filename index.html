@@ -63,6 +63,18 @@ body{margin:0}img{max-width:100%}
 .tool:hover,.tool:focus-visible{filter:brightness(1.08);outline:2px solid var(--fg);outline-offset:2px}
 .tool.alt{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .tools-note{margin:0;font-size:13px;color:var(--muted)}
+.dk{display:grid;gap:10px;padding:16px 20px;border-top:1px solid var(--line)}
+.dk-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dk label{font-size:14px;font-weight:500}
+.dk input{font-family:var(--font-mono);font-size:15px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);width:12ch}
+.dk input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.dk input[aria-invalid="true"]{border-color:#c0392b}
+.dk button,.dk a.btn{font:inherit;font-size:13px;padding:8px 14px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;text-decoration:none}
+.dk a.btn{background:var(--accent);color:#fff}
+.dk a.btn[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.dk button:hover,.dk button:focus-visible{background:var(--accent-soft);outline:none}
+.dk-url{font-family:var(--font-mono);font-size:12px;word-break:break-all;background:var(--shot-bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;color:var(--fg);user-select:all}
+.dk-msg{font-size:13px;color:var(--muted);min-height:1.2em}
 </style>
 </head>
 <body>
@@ -138,9 +150,22 @@ body{margin:0}img{max-width:100%}
 <section class="slot" id="daily">
   <div class="head"><div class="title">
     <h2><span class="n">06</span>每日好物（限時搶購）</h2>
-    <div class="meta"><span>module <b>iom_promo_hourly</b></span><span>data_key 20261126</span></div>
+    <div class="meta"><span>module <b>iom_promo_hourly</b></span><span>data_key <b id="dk-meta">20261126</b></span></div>
     <p class="note">data_key 要改成日期，每次修改一個日期</p>
-  </div><a class="open" target="_blank" rel="noopener" href="https://tw.ec.yahoo.com/cmsfe/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;module_id=iom_promo_hourly&amp;data_key=20261126&amp;definition_seq_id=3718&amp;cms_ts=1789626300&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  </div><a class="open" id="dk-head-open" target="_blank" rel="noopener" href="https://tw.ec.yahoo.com/cmsfe/gui/SchedulingModuleList?property=auction2&amp;ccode=tw&amp;service=myauction&amp;module_id=iom_promo_hourly&amp;data_key=20261126&amp;definition_seq_id=3718&amp;cms_ts=1789626300&amp;cms_mode=public">開啟 CMS ↗</a></div>
+  <div class="dk">
+    <div class="dk-row">
+      <label for="dk-input">輸入 data_key（日期 YYYYMMDD）</label>
+      <input id="dk-input" inputmode="numeric" maxlength="8" autocomplete="off" value="20261126" aria-describedby="dk-msg">
+      <button type="button" id="dk-today">帶入今天</button>
+    </div>
+    <div class="dk-url" id="dk-url"></div>
+    <div class="dk-row">
+      <a class="btn" id="dk-open" target="_blank" rel="noopener" href="#">開啟這個網址 ↗</a>
+      <button type="button" id="dk-copy">複製網址</button>
+    </div>
+    <div class="dk-msg" id="dk-msg" aria-live="polite"></div>
+  </div>
   <figure><img src="img/daily.jpg" width="1600" height="533" alt="每日好物限時搶購：倒數計時與今日免運商品" loading="lazy"></figure>
 </section>
 
@@ -204,5 +229,31 @@ body{margin:0}img{max-width:100%}
 </div>
 </div>
 
+<script>
+(function(){
+  var base='https://tw.ec.yahoo.com/cmsfe/gui/SchedulingModuleList?property=auction2&ccode=tw&service=myauction&module_id=iom_promo_hourly&data_key={KEY}&definition_seq_id=3718&cms_ts=1789626300&cms_mode=public';
+  var inp=document.getElementById('dk-input'),out=document.getElementById('dk-url'),open=document.getElementById('dk-open'),
+      head=document.getElementById('dk-head-open'),meta=document.getElementById('dk-meta'),msg=document.getElementById('dk-msg');
+  function today(){var d=new Date(Date.now()+8*3600e3);return d.toISOString().slice(0,10).replace(/-/g,'');}
+  function update(){
+    var k=inp.value.replace(/\D/g,'');
+    if(k!==inp.value)inp.value=k;
+    var ok=/^\d{8}$/.test(k);
+    inp.setAttribute('aria-invalid',ok?'false':'true');
+    if(!ok){out.textContent='請輸入 8 位數日期，例如 '+today();open.setAttribute('aria-disabled','true');msg.textContent='';return;}
+    var url=base.replace('{KEY}',k);
+    out.textContent=url;open.href=url;open.removeAttribute('aria-disabled');head.href=url;meta.textContent=k;msg.textContent='';
+  }
+  inp.addEventListener('input',update);
+  document.getElementById('dk-today').addEventListener('click',function(){inp.value=today();update();});
+  document.getElementById('dk-copy').addEventListener('click',function(){
+    if(open.getAttribute('aria-disabled')==='true'){msg.textContent='請先輸入正確的日期';return;}
+    var t=out.textContent;
+    function sel(){var r=document.createRange();r.selectNodeContents(out);var w=getSelection();w.removeAllRanges();w.addRange(r);msg.textContent='已選取網址，請按 Cmd+C 複製';}
+    if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){msg.textContent='已複製網址';},sel);}else sel();
+  });
+  inp.value=today();update();
+})();
+</script>
 </body>
 </html>
