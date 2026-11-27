@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 每本帳本用一組難以猜到的 ID 當「鑰匙」：知道連結的人才能讀寫。
+    // 不允許列出全部帳本（只能用 ID 直接存取）。
+    match /ledgers/{ledgerId} {
+      allow get, create, update, delete: if true;
+      allow list: if false;
+      match /{sub}/{docId} {
+        allow read, write: if true;
+      }
+    }
+  }
+}

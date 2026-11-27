@@ -1,0 +1,1554 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>帳本手冊</title>
+<meta name="theme-color" content="#1F6F5C">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="帳本手冊">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F0; --surface:#FFFFFF; --surface-2:#F4F7F5;
+    --ink:#182420; --muted:#5C6864; --faint:#8B958F;
+    --accent:#1F6F5C; --accent-ink:#0E4438; --accent-soft:#DCEEE8;
+    --rust:#B95A2A; --rust-soft:#F5E4D8; --line:#DCE4E0; --danger:#B33B3B;
+    --shadow: 0 1px 2px rgba(15,30,25,.06), 0 8px 20px -12px rgba(15,30,25,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1613; --surface:#161F1B; --surface-2:#1B2521;
+      --ink:#E7EEEA; --muted:#9AA6A0; --faint:#6C7874;
+      --accent:#55C0A2; --accent-ink:#BFF0DE; --accent-soft:#1D3730;
+      --rust:#E28B57; --rust-soft:#382920; --line:#28332E; --danger:#E28080;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1613; --surface:#161F1B; --surface-2:#1B2521;
+    --ink:#E7EEEA; --muted:#9AA6A0; --faint:#6C7874;
+    --accent:#55C0A2; --accent-ink:#BFF0DE; --accent-soft:#1D3730;
+    --rust:#E28B57; --rust-soft:#382920; --line:#28332E; --danger:#E28080;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--ink); font-family:"Work Sans", -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
+  .page{ max-width:480px; margin:0 auto; padding-inline:16px; padding-block:20px 40px; display:flex; flex-direction:column; gap:18px; }
+  [hidden]{ display:none !important; }
+
+  header{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  h1{ font-family:"Fraunces", serif; font-weight:600; font-size:1.5rem; letter-spacing:-.01em; margin:0; text-wrap:balance; }
+  .subtitle{ font-family:"JetBrains Mono", monospace; font-size:.72rem; color:var(--muted); white-space:nowrap; }
+
+  .back-row{ display:flex; align-items:center; gap:10px; }
+  .back-btn{
+    background:var(--surface); border:1px solid var(--line); color:var(--ink);
+    border-radius:10px; padding:7px 12px; font:inherit; font-size:.85rem; font-weight:500; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  /* ---- home ---- */
+  .add-book-card{ background:var(--surface); border-radius:16px; box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .add-book-card h2{ font-size:.95rem; margin:0; font-weight:600; cursor:pointer; }
+  .mode-tabs{ display:flex; gap:8px; }
+  .mode-tabs button{
+    flex:1; font:inherit; font-size:.85rem; font-weight:500; padding:8px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--muted); cursor:pointer;
+  }
+  .mode-tabs button[aria-pressed="true"]{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
+
+  .add-row{ display:flex; gap:8px; }
+  .field{ flex:1; display:flex; flex-direction:column; gap:4px; }
+  .field label{ font-size:.68rem; letter-spacing:.04em; text-transform:uppercase; color:var(--faint); }
+  input[type="text"], input[type="number"], input[type="date"], select{
+    font:inherit; font-size:.95rem; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:10px; padding:9px 10px; color:var(--ink); width:100%;
+  }
+  input[type="number"]{ font-family:"JetBrains Mono", monospace; }
+  input:focus, select:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+
+  button.submit, button.primary{
+    font:inherit; font-weight:600; font-size:.95rem; background:var(--accent); color:#fff;
+    border:none; border-radius:10px; padding:11px; cursor:pointer;
+  }
+  button.submit:active, button.primary:active{ opacity:.85; }
+  button.ghost{
+    font:inherit; font-weight:500; font-size:.82rem; background:var(--surface-2); color:var(--ink);
+    border:1px solid var(--line); border-radius:10px; padding:8px 12px; cursor:pointer;
+  }
+
+  .friend-row{ display:flex; gap:6px; align-items:center; }
+  .friend-row input{ flex:1; }
+  .friend-row .rm{ flex:none; background:none; border:none; color:var(--faint); font-size:1rem; cursor:pointer; padding:4px 6px; }
+  .add-friend-btn{ align-self:flex-start; font:inherit; font-size:.82rem; color:var(--accent-ink); background:none; border:none; cursor:pointer; text-decoration:underline; padding:0; }
+
+  .book-list{ display:flex; flex-direction:column; gap:10px; }
+  .book-card{
+    background:var(--surface); border-radius:16px; box-shadow:var(--shadow); padding:14px 16px;
+    display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left; border:none; width:100%;
+    font:inherit; color:inherit;
+  }
+  .book-card .info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .book-card .name{ font-weight:600; font-size:1rem; display:flex; align-items:center; gap:6px; }
+  .mode-pill{ font-size:.62rem; font-weight:600; padding:1px 6px; border-radius:999px; background:var(--surface-2); color:var(--faint); border:1px solid var(--line); }
+  .frozen-pill{ font-size:.62rem; font-weight:600; padding:1px 6px; border-radius:999px; background:var(--rust-soft); color:var(--rust); border:1px solid var(--rust); }
+  .book-card.frozen{ opacity:.92; }
+  .book-card .goto{ font-size:.78rem; color:var(--accent-ink); font-weight:600; }
+  .book-card .people{ font-size:.78rem; color:var(--muted); }
+  .book-card .balance{ font-family:"JetBrains Mono", monospace; font-size:.85rem; font-weight:600; }
+  .book-card .balance.owe{ color:var(--rust); }
+  .book-card .balance.even{ color:var(--accent); }
+  .book-card .updated{ font-size:.68rem; color:var(--faint); margin-top:1px; }
+  .book-card .chev{ flex:none; color:var(--faint); font-size:1.1rem; }
+
+  .empty{ padding:26px 16px; text-align:center; color:var(--muted); font-size:.88rem; }
+  .empty-books{ background:var(--surface); border-radius:16px; box-shadow:var(--shadow); }
+
+  /* ---- currency bar ---- */
+  .currency-bar{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .currency-chips{ display:flex; gap:6px; }
+  .currency-chips button{
+    font:inherit; font-size:.8rem; font-weight:600; padding:6px 12px; border-radius:999px;
+    border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer;
+  }
+  .currency-chips button[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .rate-panel{ background:var(--surface); border-radius:14px; box-shadow:var(--shadow); padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .rate-panel .rate-row{ display:flex; align-items:center; gap:8px; }
+  .rate-panel .rate-row label{ flex:1; font-size:.85rem; color:var(--muted); }
+  .rate-panel .rate-row .eq{ font-size:.8rem; color:var(--faint); flex:none; }
+  .rate-panel input{ width:100px; font-family:"JetBrains Mono", monospace; }
+  .rate-panel .hint{ font-size:.72rem; color:var(--faint); }
+  .rate-panel .actions{ display:flex; gap:8px; }
+
+  /* ---- settlement (pair) ---- */
+  .settlement{ position:relative; background:var(--surface); border-radius:18px; box-shadow:var(--shadow); padding:22px 20px 20px; overflow:hidden; }
+  .settlement::before{ content:""; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--accent),var(--rust)); opacity:.85; }
+  .settlement-label{ font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin:0 0 10px; }
+  .settlement-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .who{ font-weight:600; font-size:1.05rem; }
+  .arrow{ color:var(--faint); font-size:1.1rem; }
+  .settle-amount{ font-family:"JetBrains Mono", monospace; font-weight:600; font-size:1.6rem; color:var(--rust); font-variant-numeric:tabular-nums; }
+  .settle-amount.even{ color:var(--accent); }
+  .settlement-sub{ margin-top:6px; font-size:.8rem; color:var(--muted); }
+  .settle-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .settle-actions button{ font:inherit; font-size:.85rem; font-weight:600; border-radius:10px; padding:9px 14px; cursor:pointer; border:none; }
+  .settle-actions .btn-full{ background:var(--accent); color:#fff; }
+  .settle-actions .btn-partial{ background:var(--surface-2); color:var(--ink); border:1px solid var(--line); }
+  .partial-form{ display:none; margin-top:10px; gap:8px; }
+  .partial-form.open{ display:flex; }
+  .partial-form input{ flex:1; }
+  .partial-form button{ flex:none; font:inherit; font-weight:600; font-size:.85rem; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:9px 14px; cursor:pointer; }
+
+  /* ---- settle-up (group) ---- */
+  .settleup-list{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .settleup-row{ display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; flex-wrap:wrap; }
+  .settleup-row .names{ flex:1; min-width:120px; font-size:.88rem; font-weight:500; }
+  .settleup-row .names .arrow{ margin:0 4px; }
+  .settleup-row input{ width:90px; font-family:"JetBrains Mono", monospace; }
+  .settleup-row button{ font:inherit; font-weight:600; font-size:.82rem; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 10px; cursor:pointer; }
+
+  /* ---- stats ---- */
+  .stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stats.group{ grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); }
+  .stat{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
+  .stat .name{ font-size:.78rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  .dot.a{ background:var(--accent); }
+  .dot.b{ background:var(--rust); }
+  .stat .amt{ font-family:"JetBrains Mono", monospace; font-weight:600; font-size:1.15rem; font-variant-numeric:tabular-nums; }
+  .stat .bal{ font-family:"JetBrains Mono", monospace; font-size:.74rem; }
+  .stat .bal.pos{ color:var(--accent); }
+  .stat .bal.neg{ color:var(--rust); }
+
+  /* ---- add expense form ---- */
+  form.add{ background:var(--surface); border-radius:16px; box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .amount-row{ display:flex; gap:6px; }
+  .amount-row input{ flex:1; }
+  .amount-row select{ flex:none; width:76px; padding-inline:6px; }
+  .payer-toggle{ display:flex; gap:8px; flex-wrap:wrap; }
+  .payer-toggle button{
+    flex:1; min-width:64px; font:inherit; font-weight:500; font-size:.88rem; padding:9px 8px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--muted); cursor:pointer;
+  }
+  .payer-toggle button[aria-pressed="true"]{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
+  .split-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .split-chips label{
+    display:flex; align-items:center; gap:5px; font-size:.82rem; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:999px; padding:6px 10px; cursor:pointer;
+  }
+  .split-chips input{ width:auto; accent-color:var(--accent); }
+  button.submit:disabled{ opacity:.5; cursor:not-allowed; }
+
+  /* ---- ledger ---- */
+  .ledger-group h2{ font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:0 0 8px 2px; }
+  .ledger{ background:var(--surface); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; }
+  .entry{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .entry:last-child{ border-bottom:none; }
+  .entry.settlement-row-item{ background:var(--accent-soft); }
+  .entry .badge{ flex:none; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:600; color:#fff; }
+  .badge.a{ background:var(--accent); }
+  .badge.b{ background:var(--rust); }
+  .badge.settle{ background:var(--accent-ink); }
+  .entry .item{ flex:1; min-width:0; font-size:.92rem; }
+  .entry .item .sub{ display:block; font-size:.72rem; color:var(--muted); margin-top:1px; }
+  .entry .amt{ font-family:"JetBrains Mono", monospace; font-weight:600; font-size:.95rem; font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right; }
+  .entry .amt .conv{ display:block; font-weight:500; font-size:.68rem; color:var(--faint); }
+  .entry .del{ flex:none; background:none; border:none; color:var(--faint); font-size:1.05rem; line-height:1; padding:4px 2px 4px 6px; cursor:pointer; }
+  .entry .del:hover{ color:var(--danger); }
+
+  .total-bar{ display:flex; align-items:baseline; justify-content:space-between; padding:2px 4px; }
+  .total-bar .label{ font-size:.85rem; color:var(--muted); }
+  .total-bar .amt{ font-family:"JetBrains Mono", monospace; font-weight:600; font-size:1.1rem; font-variant-numeric:tabular-nums; }
+
+  .names-edit{ display:flex; gap:14px; font-size:.72rem; color:var(--faint); flex-wrap:wrap; }
+  .names-edit button{ background:none; border:none; color:inherit; text-decoration:underline; cursor:pointer; font:inherit; padding:0; }
+  .names-edit button.danger{ color:var(--danger); }
+
+  .status{ font-size:.72rem; color:var(--faint); text-align:center; }
+
+  .modal-overlay{ position:fixed; inset:0; background:rgba(10,15,13,.45); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; }
+  .modal-box{ background:var(--surface); border-radius:16px; padding:20px; width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; box-shadow:var(--shadow); }
+  .modal-box h3{ margin:0; font-size:1rem; font-weight:600; }
+  .modal-box .mrow{ display:flex; flex-direction:column; gap:6px; }
+  .modal-box .mrow label{ font-size:.72rem; color:var(--faint); }
+  .modal-box .actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:4px; }
+  .modal-box .actions button{ font:inherit; font-size:.88rem; font-weight:600; border-radius:10px; padding:9px 16px; cursor:pointer; border:none; }
+  .modal-box .actions .mok{ background:var(--accent); color:#fff; }
+  .modal-box .actions .mok.mdanger{ background:var(--danger); }
+  .modal-box .actions .mcancel{ background:var(--surface-2); color:var(--ink); border:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== HOME VIEW ===== -->
+  <div id="homeView">
+    <header>
+      <h1>帳本手冊</h1>
+      <span class="subtitle" id="bookCount"></span>
+    </header>
+
+    <div class="add-book-card">
+      <h2 id="addBookToggle">＋ 開新帳本</h2>
+      <div id="addBookForm" hidden style="display:flex; flex-direction:column; gap:12px;">
+        <div class="field">
+          <label for="bookNameInput">帳本名稱（選填）</label>
+          <input type="text" id="bookNameInput" placeholder="例如：東京旅行">
+        </div>
+
+        <!-- group fields -->
+        <div id="groupFields" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="field">
+            <label for="selfNameInput">你的名稱</label>
+            <input type="text" id="selfNameInput" value="我" maxlength="10">
+          </div>
+          <div class="field">
+            <label>朋友（至少 1 位）</label>
+            <div id="friendList" style="display:flex; flex-direction:column; gap:6px;"></div>
+            <button type="button" class="add-friend-btn" id="addFriendBtn">＋ 新增朋友</button>
+          </div>
+        </div>
+
+        <button type="button" class="submit" id="createBookBtn">建立帳本</button>
+      </div>
+    </div>
+
+    <div id="bookListContainer"></div>
+    <p class="status" id="homeStatus"></p>
+    <div class="names-edit" style="margin-top:14px">
+      <button type="button" id="backupBtn">匯出備份</button>
+      <button type="button" id="importBtn">匯入備份</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </div>
+
+  <!-- ===== BOOK VIEW ===== -->
+  <div id="bookView" hidden>
+    <div class="back-row">
+      <button type="button" class="back-btn" id="backBtn">← 所有帳本</button>
+    </div>
+
+    <header>
+      <h1 id="bookTitle">帳本</h1>
+      <span class="subtitle" id="dateRange">—</span>
+    </header>
+
+    <div class="currency-bar">
+      <div class="currency-chips" id="displayCurrencyChips"></div>
+      <button type="button" class="ghost" id="rateSettingsToggle">匯率設定</button>
+    </div>
+    <div class="rate-panel" id="ratePanel" hidden></div>
+
+    <!-- pair settlement -->
+    <section class="settlement" id="settlement" aria-live="polite" hidden></section>
+
+    <!-- group settle-up -->
+    <section class="settlement" id="settleUp" aria-live="polite" hidden></section>
+
+    <section class="stats" id="stats"></section>
+
+    <form class="add" id="addForm">
+      <div class="add-row">
+        <div class="field">
+          <label for="itemInput">項目</label>
+          <input type="text" id="itemInput" placeholder="例如：牛肉湯" maxlength="40" required>
+        </div>
+        <div class="field" style="max-width:50%">
+          <label for="amountInput">金額</label>
+          <div class="amount-row">
+            <input type="number" id="amountInput" placeholder="0" min="0" step="1" inputmode="decimal" required>
+            <select id="currencySelect"></select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label id="payerLabel">誰付的</label>
+        <div class="payer-toggle" id="payerToggle"></div>
+      </div>
+      <div class="field" id="splitField" hidden>
+        <label>誰要分攤</label>
+        <div class="split-chips" id="splitChips"></div>
+      </div>
+      <div class="field">
+        <label for="dateInput">日期</label>
+        <input type="date" id="dateInput" required>
+      </div>
+      <button type="submit" class="submit" id="submitBtn">新增一筆</button>
+    </form>
+
+    <div id="ledgerContainer"></div>
+
+    <div class="total-bar">
+      <span class="label">總支出</span>
+      <span class="amt" id="grandTotal">$0</span>
+    </div>
+
+    <div class="names-edit">
+      <button type="button" id="editNames">修改名稱</button>
+      <button type="button" id="addParticipant" hidden>新增成員</button>
+      <button type="button" class="danger" id="removeParticipant" hidden>刪除成員</button>
+      <button type="button" id="shareLink">分享連結</button>
+      <button type="button" class="danger" id="deleteBook">刪除帳本</button>
+    </div>
+    
+
+    <p class="status" id="statusLine"></p>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal-box" id="modalBox"></div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var fmt = new Intl.NumberFormat('zh-TW');
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function todayStr(){
+    var d = new Date();
+    var tz = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+    return tz.toISOString().slice(0,10);
+  }
+  function fmtShortDate(iso){ var p = iso.split('-'); return p[1] + '/' + p[2]; }
+  function weekday(iso){
+    var d = new Date(iso + 'T00:00:00');
+    return ['週日','週一','週二','週三','週四','週五','週六'][d.getDay()];
+  }
+  function relDate(ts){ if(!ts) return ''; var d = new Date(ts); return (d.getMonth()+1) + '/' + d.getDate(); }
+  function newId(){ return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+  // ---------------- modal (native prompt/confirm are unreliable inside the artifact sandbox) ----------------
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalBox = document.getElementById('modalBox');
+  function promptModal(title, defaultValue){
+    return new Promise(function(resolve){
+      modalBox.innerHTML = '<h3>'+escapeHtml(title)+'</h3>'
+        + '<div class="mrow"><input type="text" id="modalInput"></div>'
+        + '<div class="actions"><button type="button" class="mcancel" id="modalCancel">取消</button><button type="button" class="mok" id="modalOk">確定</button></div>';
+      var input = document.getElementById('modalInput');
+      input.value = defaultValue || '';
+      modalOverlay.hidden = false;
+      setTimeout(function(){ input.focus(); input.select(); }, 0);
+      function cleanup(val){ modalOverlay.hidden = true; resolve(val); }
+      document.getElementById('modalCancel').addEventListener('click', function(){ cleanup(null); });
+      document.getElementById('modalOk').addEventListener('click', function(){ cleanup(input.value); });
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ e.preventDefault(); cleanup(input.value); }
+        if(e.key === 'Escape'){ cleanup(null); }
+      });
+    });
+  }
+  function confirmModal(message, okLabel, danger){
+    return new Promise(function(resolve){
+      modalBox.innerHTML = '<h3>'+escapeHtml(message)+'</h3>'
+        + '<div class="actions"><button type="button" class="mcancel" id="modalCancel">取消</button><button type="button" class="mok'+(danger?' mdanger':'')+'" id="modalOk">'+escapeHtml(okLabel||'確定')+'</button></div>';
+      modalOverlay.hidden = false;
+      function cleanup(val){ modalOverlay.hidden = true; resolve(val); }
+      document.getElementById('modalCancel').addEventListener('click', function(){ cleanup(false); });
+      document.getElementById('modalOk').addEventListener('click', function(){ cleanup(true); });
+    });
+  }
+  var PALETTE = ['#1F6F5C','#B95A2A','#3D6FB4','#8A4FB0','#B0862F','#3E8F8F','#B0475A','#5C8A3D'];
+  function colorFor(idx){ return PALETTE[idx % PALETTE.length]; }
+
+  // ---------------- currency helpers ----------------
+  // rate = how many TWD ("base") one unit of that currency is worth. TWD itself is fixed at 1.
+  var CURRENCIES = [
+    { code:'TWD', symbol:'NT$', name:'台幣' },
+    { code:'KRW', symbol:'₩',  name:'韓元' },
+    { code:'JPY', symbol:'¥',  name:'日圓' }
+  ];
+  var DEFAULT_RATES = { TWD:1, KRW:0.024, JPY:0.21 };
+  function currencyMeta(code){ return CURRENCIES.filter(function(c){ return c.code===code; })[0] || { code:code, symbol:code+' ', name:code }; }
+  function rateOf(bk, code){
+    if(code === 'TWD') return 1;
+    var r = bk && bk.rates && bk.rates[code];
+    if(r != null && isFinite(r) && r > 0) return r;
+    return DEFAULT_RATES[code] != null ? DEFAULT_RATES[code] : 1;
+  }
+  function toBase(amount, code, bk){ return amount * rateOf(bk, code); }
+  function fromBase(baseAmount, code, bk){ return baseAmount / rateOf(bk, code); }
+  function moneyIn(amount, code){ return currencyMeta(code).symbol + fmt.format(Math.round(amount)); }
+  function moneyDisplay(baseAmount, bk){
+    var code = (bk && bk.displayCurrency) || 'TWD';
+    return moneyIn(fromBase(baseAmount, code, bk), code);
+  }
+  function defaultRatesCopy(){ return Object.assign({}, DEFAULT_RATES); }
+
+  // ---------------- local fallback store ----------------
+  var localData = {};
+  var localListeners = {};
+  function localCollection(path){
+    if(!localData[path]) localData[path] = {};
+    if(!localListeners[path]) localListeners[path] = [];
+    function snapshot(){
+      var ids = Object.keys(localData[path]);
+      return { docs: ids.map(function(id){ return { id:id, exists:true, data:function(){ return localData[path][id]; } }; }), size: ids.length, empty: ids.length === 0 };
+    }
+    function notify(){ localListeners[path].slice().forEach(function(cb){ cb(snapshot()); }); }
+    return {
+      add: function(data){
+        var id = 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+        localData[path][id] = data; notify();
+        return Promise.resolve({ id: id });
+      },
+      doc: function(id){
+        return {
+          id: id,
+          get: function(){ var d = localData[path][id]; return Promise.resolve({ exists: !!d, data: function(){ return d; } }); },
+          set: function(data){ localData[path][id] = data; notify(); return Promise.resolve(); },
+          update: function(data){ localData[path][id] = Object.assign({}, localData[path][id], data); notify(); return Promise.resolve(); },
+          delete: function(){ delete localData[path][id]; notify(); return Promise.resolve(); }
+        };
+      },
+      get: function(){ return Promise.resolve(snapshot()); },
+      onSnapshot: function(next){
+        localListeners[path].push(next);
+        setTimeout(function(){ next(snapshot()); }, 0);
+        return function(){ var i = localListeners[path].indexOf(next); if(i > -1) localListeners[path].splice(i,1); };
+      }
+    };
+  }
+
+  var dbApi = null;
+
+  var state = {
+    view: 'home',
+    books: [],
+    currentBookId: null,
+    currentBook: null,
+    expenses: [],
+    settlements: []
+  };
+  var unsubBooks = null, unsubExpenses = null, unsubSettlements = null;
+  var selectedPayer = 'a';       // pair mode
+  var selectedPayerId = null;    // group mode
+  var creationMode = 'pair';
+
+  function ensureBookDefaults(bk){
+    if(!bk.rates) bk.rates = defaultRatesCopy();
+    if(!bk.displayCurrency) bk.displayCurrency = 'TWD';
+    return bk;
+  }
+
+  function computeBalance(book){ // pair mode signed BASE balance: + means personB owes personA
+    var raw = ((book.totalA||0) - (book.totalB||0)) / 2;
+    return raw - (book.netRepayment || 0);
+  }
+
+  var els = {
+    homeView: document.getElementById('homeView'),
+    bookView: document.getElementById('bookView'),
+    bookCount: document.getElementById('bookCount'),
+    addBookToggle: document.getElementById('addBookToggle'),
+    addBookForm: document.getElementById('addBookForm'),
+    groupFields: document.getElementById('groupFields'),
+    bookNameInput: document.getElementById('bookNameInput'),
+    selfNameInput: document.getElementById('selfNameInput'),
+    friendList: document.getElementById('friendList'),
+    addFriendBtn: document.getElementById('addFriendBtn'),
+    createBookBtn: document.getElementById('createBookBtn'),
+    bookListContainer: document.getElementById('bookListContainer'),
+    homeStatus: document.getElementById('homeStatus'),
+
+    backBtn: document.getElementById('backBtn'),
+    bookTitle: document.getElementById('bookTitle'),
+    dateRange: document.getElementById('dateRange'),
+    displayCurrencyChips: document.getElementById('displayCurrencyChips'),
+    rateSettingsToggle: document.getElementById('rateSettingsToggle'),
+    ratePanel: document.getElementById('ratePanel'),
+    settlement: document.getElementById('settlement'),
+    settleUp: document.getElementById('settleUp'),
+    stats: document.getElementById('stats'),
+    ledgerContainer: document.getElementById('ledgerContainer'),
+    grandTotal: document.getElementById('grandTotal'),
+    statusLine: document.getElementById('statusLine'),
+    form: document.getElementById('addForm'),
+    itemInput: document.getElementById('itemInput'),
+    amountInput: document.getElementById('amountInput'),
+    currencySelect: document.getElementById('currencySelect'),
+    dateInput: document.getElementById('dateInput'),
+    payerLabel: document.getElementById('payerLabel'),
+    payerToggle: document.getElementById('payerToggle'),
+    splitField: document.getElementById('splitField'),
+    splitChips: document.getElementById('splitChips'),
+    editNames: document.getElementById('editNames'),
+    addParticipant: document.getElementById('addParticipant'),
+    removeParticipant: document.getElementById('removeParticipant'),
+    shareLink: document.getElementById('shareLink'),
+    backupBtn: document.getElementById('backupBtn'),
+    importBtn: document.getElementById('importBtn'),
+    importFile: document.getElementById('importFile'),
+    deleteBook: document.getElementById('deleteBook')
+  };
+  els.dateInput.value = todayStr();
+
+  // ---------------- home: create-book form ----------------
+  els.addBookToggle.addEventListener('click', function(){
+    els.addBookForm.hidden = !els.addBookForm.hidden;
+  });
+  function resetFriendList(){
+    els.friendList.innerHTML = '';
+    addFriendRow(); addFriendRow();
+  }
+  function addFriendRow(){
+    var row = document.createElement('div');
+    row.className = 'friend-row';
+    var input = document.createElement('input');
+    input.type = 'text'; input.placeholder = '朋友名稱'; input.maxLength = 10;
+    var rm = document.createElement('button');
+    rm.type = 'button'; rm.className = 'rm'; rm.textContent = '✕';
+    rm.addEventListener('click', function(){ if(els.friendList.children.length > 1) row.remove(); });
+    row.appendChild(input); row.appendChild(rm);
+    els.friendList.appendChild(row);
+  }
+  els.addFriendBtn.addEventListener('click', addFriendRow);
+  resetFriendList();
+
+  els.createBookBtn.addEventListener('click', function(){
+    var now = Date.now();
+    var bookName = (els.bookNameInput.value || '').trim();
+
+    var self = (els.selfNameInput.value || '我').trim() || '我';
+    var friends = [];
+    els.friendList.querySelectorAll('input').forEach(function(inp){ var v = inp.value.trim(); if(v) friends.push(v); });
+    if(friends.length === 0){ setHomeStatus('至少輸入一位朋友的名稱。'); return; }
+    var participants = [{ id: newId(), name: self }].concat(friends.map(function(f){ return { id: newId(), name: f }; }));
+    var gname = bookName || participants.map(function(p){ return p.name; }).join('、');
+    dbApi.collection('books').add({
+      mode: 'group', name: gname, participants: participants,
+      balances: {}, totalExpense: 0,
+      rates: defaultRatesCopy(), displayCurrency: 'TWD',
+      createdAt: now, updatedAt: now
+    }).then(function(ref){ clearCreateForm(); openBook(ref.id); })
+      .catch(function(){ setHomeStatus('建立帳本失敗，請再試一次。'); });
+  });
+
+  function clearCreateForm(){
+    els.bookNameInput.value = ''; els.selfNameInput.value = '我';
+    resetFriendList();
+    els.addBookForm.hidden = true;
+  }
+
+  function setHomeStatus(msg){ els.homeStatus.textContent = msg || ''; }
+
+  function renderHome(){
+    els.bookCount.textContent = state.books.length ? state.books.length + ' 本' : '';
+    if(state.books.length === 0){
+      els.bookListContainer.innerHTML = '<div class="ledger empty-books"><div class="empty">還沒有任何帳本，建立第一本開始記帳吧。</div></div>';
+      return;
+    }
+    var sorted = state.books.slice().sort(function(a,b){ return (b.updatedAt||0) - (a.updatedAt||0); });
+    var html = '<div class="book-list">';
+    sorted.forEach(function(bk){
+      var peopleLine, balHtml;
+      if(bk.mode === 'group'){
+        peopleLine = (bk.participants||[]).map(function(p){ return p.name; }).join('、');
+        var balances = bk.balances || {};
+        var maxAbs = 0;
+        Object.keys(balances).forEach(function(k){ maxAbs = Math.max(maxAbs, Math.abs(balances[k]||0)); });
+        balHtml = maxAbs < 0.5 ? '<span class="balance even">打平了</span>' : '<span class="balance owe">尚有未結清款項</span>';
+      } else {
+        peopleLine = bk.personA + ' · ' + bk.personB;
+        var bal = computeBalance(bk);
+        if(Math.abs(bal) < 0.5){ balHtml = '<span class="balance even">打平了</span>'; }
+        else if(bal > 0){ balHtml = '<span class="balance owe">'+escapeHtml(bk.personB)+' 欠 '+escapeHtml(bk.personA)+' '+moneyDisplay(bal, bk)+'</span>'; }
+        else { balHtml = '<span class="balance owe">'+escapeHtml(bk.personA)+' 欠 '+escapeHtml(bk.personB)+' '+moneyDisplay(-bal, bk)+'</span>'; }
+      }
+      {
+        var pendingPill = '';
+        html += '<button type="button" class="book-card" data-id="'+bk.id+'">'
+              + '<span class="info">'
+              +   '<span class="name">'+escapeHtml(bk.name)+'<span class="mode-pill">'+(bk.mode==='group'?'多人':'兩人')+'</span>'+pendingPill+'</span>'
+              +   '<span class="people">'+escapeHtml(peopleLine)+'</span>'
+              +   balHtml
+              +   '<span class="updated">'+(bk.updatedAt ? '最後更新 ' + relDate(bk.updatedAt) : '')+'</span>'
+              + '</span>'
+              + '<span class="chev">›</span>'
+              + '</button>';
+      }
+    });
+    html += '</div>';
+    els.bookListContainer.innerHTML = html;
+  }
+
+  els.bookListContainer.addEventListener('click', function(e){
+    var card = e.target.closest('.book-card'); if(!card) return;
+    openBook(card.getAttribute('data-id'));
+  });
+
+  function subscribeBooks(){
+    if(unsubBooks) unsubBooks();
+    unsubBooks = dbApi.collection('books').onSnapshot(function(snap){
+      state.books = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return ensureBookDefaults({
+          id: d.id, mode: v.mode || 'pair', name: v.name,
+          personA: v.personA, personB: v.personB,
+          totalA: v.totalA || 0, totalB: v.totalB || 0, netRepayment: v.netRepayment || 0,
+          participants: v.participants || [], balances: v.balances || {}, totalExpense: v.totalExpense || 0,
+          rates: v.rates, displayCurrency: v.displayCurrency,
+          createdAt: v.createdAt || 0, updatedAt: v.updatedAt || 0
+        });
+      });
+      if(state.view === 'home') renderHome();
+      if(state.view === 'book' && state.currentBookId){
+        var fresh = state.books.filter(function(b){ return b.id === state.currentBookId; })[0];
+        if(fresh && state.currentBook){
+          fresh.totalA = state.currentBook.totalA; fresh.totalB = state.currentBook.totalB;
+          fresh.netRepayment = state.currentBook.netRepayment;
+          fresh.balances = state.currentBook.balances; fresh.totalExpense = state.currentBook.totalExpense;
+          fresh._totalPaid = state.currentBook._totalPaid;
+          fresh.rates = state.currentBook.rates; fresh.displayCurrency = state.currentBook.displayCurrency;
+          state.currentBook = fresh;
+          renderExportState();
+        }
+      }
+    }, function(){ setHomeStatus('讀取帳本清單時發生問題。'); });
+  }
+
+  // ---------------- book view ----------------
+  els.backBtn.addEventListener('click', goHome);
+
+  function goHome(){
+    if(unsubExpenses){ unsubExpenses(); unsubExpenses = null; }
+    if(unsubSettlements){ unsubSettlements(); unsubSettlements = null; }
+    state.view = 'home'; state.currentBookId = null; state.currentBook = null;
+    els.bookView.hidden = true; els.homeView.hidden = false;
+    els.ratePanel.hidden = true;
+    renderHome();
+  }
+
+  function initCurrencySelect(bk){
+    els.currencySelect.innerHTML = CURRENCIES.map(function(c){ return '<option value="'+c.code+'">'+c.code+'</option>'; }).join('');
+    els.currencySelect.value = bk.displayCurrency || 'TWD';
+  }
+
+  function openBook(id){
+    var bk = state.books.filter(function(b){ return b.id === id; })[0];
+    if(!bk) return;
+    ensureBookDefaults(bk);
+    if(unsubExpenses) unsubExpenses();
+    if(unsubSettlements) unsubSettlements();
+    state.view = 'book'; state.currentBookId = id; state.currentBook = Object.assign({}, bk);
+    state.expenses = []; state.settlements = [];
+    selectedPayer = 'a'; selectedPayerId = bk.mode === 'group' && bk.participants[0] ? bk.participants[0].id : null;
+    els.homeView.hidden = true; els.bookView.hidden = false; els.statusLine.textContent = '';
+    els.ratePanel.hidden = true;
+    els.settlement.hidden = bk.mode !== 'pair';
+    els.settleUp.hidden = bk.mode !== 'group';
+    els.addParticipant.hidden = bk.mode !== 'group';
+    els.removeParticipant.hidden = bk.mode !== 'group';
+    els.splitField.hidden = bk.mode !== 'group';
+    initCurrencySelect(state.currentBook);
+    renderBook();
+    renderExportState();
+
+    // persist rate/currency defaults for books created before this feature existed
+    if(!bk.rates || !bk.displayCurrency){
+      dbApi.collection('books').doc(id).update({ rates: state.currentBook.rates, displayCurrency: state.currentBook.displayCurrency }).catch(function(){});
+    }
+
+    var expensesCol = dbApi.collection('books/'+id+'/expenses');
+    var settlementsCol = dbApi.collection('books/'+id+'/settlements');
+    var expensesLoaded = false, settlementsLoaded = false;
+
+    unsubExpenses = expensesCol.onSnapshot(function(snap){
+      state.expenses = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, item: v.item, amount: v.amount, currency: v.currency || 'TWD', payer: v.payer, payerId: v.payerId, splitIds: v.splitIds, date: v.date, createdAt: v.createdAt || 0 };
+      });
+      expensesLoaded = true;
+      if(expensesLoaded && settlementsLoaded) recomputeAndSync(); else renderBook();
+    }, function(){ els.statusLine.textContent = '讀取支出資料時發生問題。'; });
+
+    unsubSettlements = settlementsCol.onSnapshot(function(snap){
+      state.settlements = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, amount: v.amount, currency: v.currency || 'TWD', debtor: v.debtor, creditor: v.creditor, fromId: v.fromId, toId: v.toId, date: v.date, createdAt: v.createdAt || 0 };
+      });
+      settlementsLoaded = true;
+      if(expensesLoaded && settlementsLoaded) recomputeAndSync(); else renderBook();
+    }, function(){ els.statusLine.textContent = '讀取結清資料時發生問題。'; });
+  }
+
+  function recomputeAndSync(){
+    var bk = state.currentBook;
+    if(bk.mode === 'group'){
+      var totalPaid = {}, totalShare = {};
+      bk.participants.forEach(function(p){ totalPaid[p.id] = 0; totalShare[p.id] = 0; });
+      state.expenses.forEach(function(e){
+        var base = toBase(e.amount, e.currency || 'TWD', bk);
+        totalPaid[e.payerId] = (totalPaid[e.payerId] || 0) + base;
+        var ids = (e.splitIds && e.splitIds.length) ? e.splitIds : bk.participants.map(function(p){ return p.id; });
+        var share = base / ids.length;
+        ids.forEach(function(id){ totalShare[id] = (totalShare[id] || 0) + share; });
+      });
+      var balances = {};
+      bk.participants.forEach(function(p){ balances[p.id] = (totalPaid[p.id]||0) - (totalShare[p.id]||0); });
+      state.settlements.forEach(function(s){
+        var base = toBase(s.amount, s.currency || 'TWD', bk);
+        balances[s.fromId] = (balances[s.fromId] || 0) + base;
+        balances[s.toId] = (balances[s.toId] || 0) - base;
+      });
+      var totalExpense = 0;
+      bk.participants.forEach(function(p){ totalExpense += (totalPaid[p.id]||0); });
+      bk.balances = balances; bk.totalExpense = totalExpense; bk._totalPaid = totalPaid;
+      renderBook();
+      dbApi.collection('books').doc(state.currentBookId).update({ balances: balances, totalExpense: totalExpense, updatedAt: Date.now() }).catch(function(){});
+    } else {
+      var totalA = 0, totalB = 0;
+      state.expenses.forEach(function(e){
+        var base = toBase(e.amount, e.currency || 'TWD', bk);
+        if(e.payer === 'a') totalA += base; else totalB += base;
+      });
+      var netRepayment = 0;
+      state.settlements.forEach(function(s){
+        var base = toBase(s.amount, s.currency || 'TWD', bk);
+        netRepayment += (s.debtor === 'b' ? base : -base);
+      });
+      bk.totalA = totalA; bk.totalB = totalB; bk.netRepayment = netRepayment;
+      renderBook();
+      dbApi.collection('books').doc(state.currentBookId).update({ totalA: totalA, totalB: totalB, netRepayment: netRepayment, updatedAt: Date.now() }).catch(function(){});
+    }
+  }
+
+  function renderPayerAndSplit(){
+    var bk = state.currentBook;
+    if(bk.mode === 'group'){
+      els.payerLabel.textContent = '誰付的';
+      var html = '';
+      bk.participants.forEach(function(p){
+        html += '<button type="button" data-payer="'+p.id+'" aria-pressed="'+(p.id===selectedPayerId?'true':'false')+'">'+escapeHtml(p.name)+'</button>';
+      });
+      els.payerToggle.innerHTML = html;
+      var chips = '';
+      bk.participants.forEach(function(p){ chips += '<label><input type="checkbox" value="'+p.id+'" checked> '+escapeHtml(p.name)+'</label>'; });
+      els.splitChips.innerHTML = chips;
+    } else {
+      els.payerLabel.textContent = '誰付的';
+      els.payerToggle.innerHTML =
+        '<button type="button" data-payer="a" aria-pressed="'+(selectedPayer==='a'?'true':'false')+'">'+escapeHtml(bk.personA)+'付</button>'
+      + '<button type="button" data-payer="b" aria-pressed="'+(selectedPayer==='b'?'true':'false')+'">'+escapeHtml(bk.personB)+'付</button>';
+    }
+  }
+  els.payerToggle.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    var val = b.getAttribute('data-payer');
+    if(state.currentBook.mode === 'group'){ selectedPayerId = val; } else { selectedPayer = val; }
+    renderPayerAndSplit();
+  });
+
+  function renderCurrencyBar(bk){
+    var html = CURRENCIES.map(function(c){
+      return '<button type="button" data-code="'+c.code+'" aria-pressed="'+((bk.displayCurrency||'TWD')===c.code?'true':'false')+'">'+c.code+'</button>';
+    }).join('');
+    els.displayCurrencyChips.innerHTML = html;
+  }
+  els.displayCurrencyChips.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    var code = b.getAttribute('data-code');
+    state.currentBook.displayCurrency = code;
+    renderCurrencyBar(state.currentBook);
+    renderBook();
+    dbApi.collection('books').doc(state.currentBookId).update({ displayCurrency: code, updatedAt: Date.now() }).catch(function(){});
+  });
+
+  function buildRatePanel(){
+    var bk = state.currentBook;
+    var html = '<div class="rate-row"><label>1 KRW（韓元）＝</label><input type="number" id="rateKRW" value="'+rateOf(bk,'KRW')+'" min="0" step="0.0001"><span class="eq">TWD</span></div>'
+             + '<div class="rate-row"><label>1 JPY（日圓）＝</label><input type="number" id="rateJPY" value="'+rateOf(bk,'JPY')+'" min="0" step="0.0001"><span class="eq">TWD</span></div>'
+             + '<p class="hint">預設為參考匯率，請依實際匯率自行修改；儲存後會立刻套用到這本帳本的所有金額換算。</p>'
+             + '<div class="actions"><button type="button" class="submit" id="saveRates" style="flex:1;">儲存匯率</button></div>';
+    els.ratePanel.innerHTML = html;
+  }
+  els.rateSettingsToggle.addEventListener('click', function(){
+    if(els.ratePanel.hidden){ buildRatePanel(); els.ratePanel.hidden = false; }
+    else { els.ratePanel.hidden = true; }
+  });
+  els.ratePanel.addEventListener('click', function(e){
+    if(e.target.id !== 'saveRates') return;
+    var krw = parseFloat(document.getElementById('rateKRW').value);
+    var jpy = parseFloat(document.getElementById('rateJPY').value);
+    if(!isFinite(krw) || krw <= 0 || !isFinite(jpy) || jpy <= 0){ els.statusLine.textContent = '匯率請輸入大於 0 的數字。'; return; }
+    var rates = { TWD: 1, KRW: krw, JPY: jpy };
+    state.currentBook.rates = rates;
+    els.ratePanel.hidden = true;
+    recomputeAndSync();
+    dbApi.collection('books').doc(state.currentBookId).update({ rates: rates, updatedAt: Date.now() }).catch(function(){});
+  });
+
+  function renderBook(){
+    if(!state.currentBook) return;
+    var bk = state.currentBook;
+    els.bookTitle.textContent = bk.name;
+    renderPayerAndSplit();
+    renderCurrencyBar(bk);
+
+    var allDates = state.expenses.map(function(e){ return e.date; }).concat(state.settlements.map(function(s){ return s.date; })).filter(Boolean).sort();
+    if(allDates.length){
+      var first = allDates[0], last = allDates[allDates.length-1];
+      els.dateRange.textContent = first === last ? fmtShortDate(first) : fmtShortDate(first) + '–' + fmtShortDate(last);
+    } else {
+      els.dateRange.textContent = fmtShortDate(todayStr());
+    }
+
+    if(bk.mode === 'group'){ renderGroupSettleUp(bk); renderGroupStats(bk); }
+    else { renderPairSettlement(bk); renderPairStats(bk); }
+
+    renderLedger(bk);
+
+    var totalBase = bk.mode === 'group' ? (bk.totalExpense||0) : ((bk.totalA||0)+(bk.totalB||0));
+    els.grandTotal.textContent = moneyDisplay(totalBase, bk);
+  }
+
+  function renderPairStats(bk){
+    els.stats.className = 'stats';
+    els.stats.innerHTML =
+      '<div class="stat"><span class="name"><span class="dot a"></span>'+escapeHtml(bk.personA)+' 付了</span><span class="amt">'+moneyDisplay(bk.totalA||0, bk)+'</span></div>'
+    + '<div class="stat"><span class="name"><span class="dot b"></span>'+escapeHtml(bk.personB)+' 付了</span><span class="amt">'+moneyDisplay(bk.totalB||0, bk)+'</span></div>';
+  }
+
+  function renderGroupStats(bk){
+    els.stats.className = 'stats group';
+    var totalPaid = bk._totalPaid || {};
+    var html = '';
+    bk.participants.forEach(function(p, i){
+      var paid = totalPaid[p.id] || 0;
+      var bal = (bk.balances || {})[p.id] || 0;
+      var balCls = bal > 0.5 ? 'pos' : (bal < -0.5 ? 'neg' : '');
+      var balText = Math.abs(bal) < 0.5 ? '打平' : (bal > 0 ? '應收 ' + moneyDisplay(bal, bk) : '應付 ' + moneyDisplay(-bal, bk));
+      html += '<div class="stat"><span class="name"><span class="dot" style="background:'+colorFor(i)+'"></span>'+escapeHtml(p.name)+'</span>'
+            + '<span class="amt">'+moneyDisplay(paid, bk)+'</span>'
+            + '<span class="bal '+balCls+'">'+balText+'</span></div>';
+    });
+    els.stats.innerHTML = html;
+  }
+
+  function renderPairSettlement(bk){
+    var totalBase = (bk.totalA||0)+(bk.totalB||0);
+    var bal = computeBalance(bk);
+    var html = '<p class="settlement-label">結算</p>';
+    if(totalBase === 0 && Math.abs(bal) < 0.5){
+      html += '<div class="settlement-row"><span class="who">尚無支出</span></div><p class="settlement-sub">新增第一筆後開始計算。</p>';
+    } else if(Math.abs(bal) < 0.5){
+      html += '<div class="settlement-row"><span class="settle-amount even">打平了</span></div><p class="settlement-sub">兩人目前互不相欠。</p>';
+    } else if(bal > 0){
+      html += '<div class="settlement-row"><span class="who">'+escapeHtml(bk.personB)+'</span><span class="arrow">→</span><span class="who">'+escapeHtml(bk.personA)+'</span></div>'
+            + '<div class="settlement-row"><span class="settle-amount">'+moneyDisplay(bal, bk)+'</span></div>'
+            + '<p class="settlement-sub">'+escapeHtml(bk.personB)+' 要補給 '+escapeHtml(bk.personA)+' 這個金額，兩人就打平。</p>'
+            + settleActionsHtml();
+    } else {
+      html += '<div class="settlement-row"><span class="who">'+escapeHtml(bk.personA)+'</span><span class="arrow">→</span><span class="who">'+escapeHtml(bk.personB)+'</span></div>'
+            + '<div class="settlement-row"><span class="settle-amount">'+moneyDisplay(-bal, bk)+'</span></div>'
+            + '<p class="settlement-sub">'+escapeHtml(bk.personA)+' 要補給 '+escapeHtml(bk.personB)+' 這個金額，兩人就打平。</p>'
+            + settleActionsHtml();
+    }
+    els.settlement.innerHTML = html;
+    wireSettleActions();
+  }
+
+  function settleActionsHtml(){
+    return '<div class="settle-actions">'
+      + '<button type="button" class="btn-full" id="settleFullBtn">一鍵結清</button>'
+      + '<button type="button" class="btn-partial" id="settlePartialToggle">部分結清</button>'
+      + '</div>'
+      + '<div class="partial-form" id="partialForm">'
+      + '<input type="number" id="partialAmount" min="1" step="1" placeholder="金額" inputmode="decimal">'
+      + '<button type="button" id="partialConfirm">確認</button>'
+      + '</div>';
+  }
+  function wireSettleActions(){
+    var fullBtn = document.getElementById('settleFullBtn');
+    var partialToggle = document.getElementById('settlePartialToggle');
+    var partialForm = document.getElementById('partialForm');
+    var partialConfirm = document.getElementById('partialConfirm');
+    var partialAmount = document.getElementById('partialAmount');
+    if(fullBtn) fullBtn.addEventListener('click', settleFull);
+    if(partialToggle) partialToggle.addEventListener('click', function(){
+      partialForm.classList.toggle('open');
+      if(partialForm.classList.contains('open')) partialAmount.focus();
+    });
+    if(partialConfirm) partialConfirm.addEventListener('click', function(){
+      var amt = parseFloat(partialAmount.value);
+      if(!isFinite(amt) || amt <= 0) return;
+      settlePartial(amt);
+      partialAmount.value = ''; partialForm.classList.remove('open');
+    });
+  }
+  function settleFull(){
+    var bk = state.currentBook;
+    var bal = computeBalance(bk); // base
+    if(Math.abs(bal) < 0.5) return;
+    var amtInDisplay = fromBase(Math.abs(bal), bk.displayCurrency, bk);
+    addPairSettlement(amtInDisplay, bk.displayCurrency, bal > 0 ? 'b' : 'a', bal > 0 ? 'a' : 'b');
+  }
+  function settlePartial(amountInDisplay){
+    var bk = state.currentBook;
+    var bal = computeBalance(bk);
+    if(Math.abs(bal) < 0.5) return;
+    var maxInDisplay = fromBase(Math.abs(bal), bk.displayCurrency, bk);
+    amountInDisplay = Math.min(amountInDisplay, maxInDisplay);
+    addPairSettlement(amountInDisplay, bk.displayCurrency, bal > 0 ? 'b' : 'a', bal > 0 ? 'a' : 'b');
+  }
+  function addPairSettlement(amount, currency, debtor, creditor){
+    dbApi.collection('books/'+state.currentBookId+'/settlements').add({
+      amount: amount, currency: currency, debtor: debtor, creditor: creditor, date: todayStr(), createdAt: Date.now()
+    }).catch(function(){ els.statusLine.textContent = '記錄結清失敗，請再試一次。'; });
+  }
+
+  function suggestTransfers(bk){ // amounts returned in BASE
+    var balances = bk.balances || {};
+    var debtors = [], creditors = [];
+    bk.participants.forEach(function(p){
+      var b = balances[p.id] || 0;
+      if(b < -0.5) debtors.push({ id: p.id, amt: -b });
+      else if(b > 0.5) creditors.push({ id: p.id, amt: b });
+    });
+    debtors.sort(function(x,y){ return y.amt - x.amt; });
+    creditors.sort(function(x,y){ return y.amt - x.amt; });
+    var transfers = []; var i = 0, j = 0;
+    while(i < debtors.length && j < creditors.length){
+      var pay = Math.min(debtors[i].amt, creditors[j].amt);
+      transfers.push({ from: debtors[i].id, to: creditors[j].id, amountBase: pay });
+      debtors[i].amt -= pay; creditors[j].amt -= pay;
+      if(debtors[i].amt < 0.5) i++;
+      if(creditors[j].amt < 0.5) j++;
+    }
+    return transfers;
+  }
+  function nameOf(bk, id){
+    var p = bk.participants.filter(function(x){ return x.id === id; })[0];
+    return p ? p.name : '?';
+  }
+
+  function renderGroupSettleUp(bk){
+    var transfers = suggestTransfers(bk);
+    var html = '<p class="settlement-label">結算建議</p>';
+    if(transfers.length === 0){
+      html += '<div class="settlement-row"><span class="settle-amount even">打平了</span></div><p class="settlement-sub">目前所有人互不相欠。</p>';
+    } else {
+      html += '<div class="settleup-list">';
+      transfers.forEach(function(t, idx){
+        var displayAmt = Math.round(fromBase(t.amountBase, bk.displayCurrency, bk));
+        html += '<div class="settleup-row" data-idx="'+idx+'" data-from="'+t.from+'" data-to="'+t.to+'">'
+              + '<span class="names">'+escapeHtml(nameOf(bk,t.from))+'<span class="arrow">→</span>'+escapeHtml(nameOf(bk,t.to))+'</span>'
+              + '<input type="number" min="1" step="1" value="'+displayAmt+'">'
+              + '<span style="font-size:.75rem;color:var(--faint);">'+bk.displayCurrency+'</span>'
+              + '<button type="button" data-act="settle">標記已結清</button>'
+              + '</div>';
+      });
+      html += '</div><p class="settlement-sub" style="margin-top:10px;">金額可以自己改，部分結清也可以。</p>';
+    }
+    els.settleUp.innerHTML = html;
+  }
+  els.settleUp.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-act="settle"]'); if(!btn) return;
+    var row = btn.closest('.settleup-row');
+    var from = row.getAttribute('data-from'), to = row.getAttribute('data-to');
+    var input = row.querySelector('input');
+    var amt = parseFloat(input.value);
+    if(!isFinite(amt) || amt <= 0) return;
+    dbApi.collection('books/'+state.currentBookId+'/settlements').add({
+      fromId: from, toId: to, amount: amt, currency: state.currentBook.displayCurrency, date: todayStr(), createdAt: Date.now()
+    }).catch(function(){ els.statusLine.textContent = '記錄結清失敗，請再試一次。'; });
+  });
+
+  function renderLedger(bk){
+    var items = state.expenses.map(function(e){ return { type:'expense', date:e.date, createdAt:e.createdAt, data:e }; })
+      .concat(state.settlements.map(function(s){ return { type:'settlement', date:s.date, createdAt:s.createdAt, data:s }; }));
+    var byDate = {};
+    items.forEach(function(it){ (byDate[it.date] = byDate[it.date] || []).push(it); });
+    var dateKeys = Object.keys(byDate).sort().reverse();
+
+    if(dateKeys.length === 0){
+      els.ledgerContainer.innerHTML = '<div class="ledger"><div class="empty">還沒有任何記錄，從下面新增第一筆吧。</div></div>';
+      return;
+    }
+    var out = '';
+    dateKeys.forEach(function(dk){
+      var group = byDate[dk].slice().sort(function(x,y){ return y.createdAt - x.createdAt; });
+      out += '<div class="ledger-group"><h2>'+fmtShortDate(dk)+'　'+weekday(dk)+'</h2><div class="ledger">';
+      group.forEach(function(it){
+        var amtCode = it.data.currency || 'TWD';
+        var convHtml = '';
+        if(amtCode !== (bk.displayCurrency||'TWD')){
+          var base = toBase(it.data.amount, amtCode, bk);
+          convHtml = '<span class="conv">≈ '+moneyDisplay(base, bk)+'</span>';
+        }
+        if(it.type === 'expense'){
+          var e = it.data;
+          if(bk.mode === 'group'){
+            var idx = bk.participants.findIndex(function(p){ return p.id === e.payerId; });
+            var payerName = nameOf(bk, e.payerId);
+            var ids = (e.splitIds && e.splitIds.length) ? e.splitIds : bk.participants.map(function(p){ return p.id; });
+            var sub = payerName + ' 付・' + ids.length + ' 人分攤';
+            out += '<div class="entry" data-id="'+e.id+'" data-kind="expense">'
+                 + '<span class="badge" style="background:'+colorFor(idx<0?0:idx)+'">'+escapeHtml(payerName.slice(0,1))+'</span>'
+                 + '<span class="item">'+escapeHtml(e.item)+'<span class="sub">'+escapeHtml(sub)+'</span></span>'
+                 + '<span class="amt">'+moneyIn(e.amount, amtCode)+convHtml+'</span>'
+                 + '<button type="button" class="del" data-id="'+e.id+'" data-kind="expense" aria-label="刪除">✕</button>'
+                 + '</div>';
+          } else {
+            out += '<div class="entry" data-id="'+e.id+'" data-kind="expense">'
+                 + '<span class="badge '+e.payer+'">'+escapeHtml(bk[e.payer==='a'?'personA':'personB'].slice(0,1))+'</span>'
+                 + '<span class="item">'+escapeHtml(e.item)+'<span class="sub">'+escapeHtml(bk[e.payer==='a'?'personA':'personB'])+' 付</span></span>'
+                 + '<span class="amt">'+moneyIn(e.amount, amtCode)+convHtml+'</span>'
+                 + '<button type="button" class="del" data-id="'+e.id+'" data-kind="expense" aria-label="刪除">✕</button>'
+                 + '</div>';
+          }
+        } else {
+          var s = it.data;
+          var debtorName = bk.mode === 'group' ? nameOf(bk, s.fromId) : bk[s.debtor==='a'?'personA':'personB'];
+          var creditorName = bk.mode === 'group' ? nameOf(bk, s.toId) : bk[s.creditor==='a'?'personA':'personB'];
+          out += '<div class="entry settlement-row-item" data-id="'+s.id+'" data-kind="settlement">'
+               + '<span class="badge settle">✓</span>'
+               + '<span class="item">已結清<span class="sub">'+escapeHtml(debtorName)+' → '+escapeHtml(creditorName)+'</span></span>'
+               + '<span class="amt">'+moneyIn(s.amount, amtCode)+convHtml+'</span>'
+               + '<button type="button" class="del" data-id="'+s.id+'" data-kind="settlement" aria-label="刪除">✕</button>'
+               + '</div>';
+        }
+      });
+      out += '</div></div>';
+    });
+    els.ledgerContainer.innerHTML = out;
+  }
+
+  els.ledgerContainer.addEventListener('click', function(e){
+    var delBtn = e.target.closest('.del');
+    if(delBtn){
+      var id = delBtn.getAttribute('data-id'); var kind = delBtn.getAttribute('data-kind');
+      var col = dbApi.collection('books/'+state.currentBookId+'/'+(kind === 'expense' ? 'expenses' : 'settlements'));
+      col.doc(id).delete().catch(function(){});
+      return;
+    }
+    var entry = e.target.closest('.entry');
+    if(!entry) return;
+    var eid = entry.getAttribute('data-id'); var ekind = entry.getAttribute('data-kind');
+    if(ekind === 'expense'){
+      var exp = state.expenses.filter(function(x){ return x.id === eid; })[0];
+      if(exp) openExpenseEditor(exp);
+    } else {
+      var st = state.settlements.filter(function(x){ return x.id === eid; })[0];
+      if(st) openSettlementEditor(st);
+    }
+  });
+
+  function openExpenseEditor(e){
+    var bk = state.currentBook;
+    var isGroup = bk.mode === 'group';
+    var payerOptions = isGroup
+      ? bk.participants.map(function(p){ return '<option value="'+p.id+'"'+(p.id===e.payerId?' selected':'')+'>'+escapeHtml(p.name)+'</option>'; }).join('')
+      : '<option value="a"'+(e.payer==='a'?' selected':'')+'>'+escapeHtml(bk.personA)+'</option><option value="b"'+(e.payer==='b'?' selected':'')+'>'+escapeHtml(bk.personB)+'</option>';
+    var splitHtml = '';
+    if(isGroup){
+      var currentSplit = (e.splitIds && e.splitIds.length) ? e.splitIds : bk.participants.map(function(p){ return p.id; });
+      splitHtml = '<div class="mrow"><label>分攤名單</label><div class="split-chips" id="editSplitChips">'
+        + bk.participants.map(function(p){ return '<label><input type="checkbox" value="'+p.id+'"'+(currentSplit.indexOf(p.id)>-1?' checked':'')+'> '+escapeHtml(p.name)+'</label>'; }).join('')
+        + '</div></div>';
+    }
+    modalBox.innerHTML = '<h3>編輯這筆支出</h3>'
+      + '<div class="mrow"><label>項目</label><input type="text" id="editItem" value="'+escapeHtml(e.item)+'"></div>'
+      + '<div class="mrow"><label>金額</label><div style="display:flex;gap:6px;"><input type="number" id="editAmount" value="'+e.amount+'" style="flex:1"><select id="editCurrency" style="flex:none;width:74px;">'+CURRENCIES.map(function(c){ return '<option value="'+c.code+'"'+(c.code===(e.currency||'TWD')?' selected':'')+'>'+c.code+'</option>'; }).join('')+'</select></div></div>'
+      + '<div class="mrow"><label>誰付的</label><select id="editPayer">'+payerOptions+'</select></div>'
+      + splitHtml
+      + '<div class="mrow"><label>日期</label><input type="date" id="editDate" value="'+e.date+'"></div>'
+      + '<div class="actions"><button type="button" class="mcancel" id="modalCancel">取消</button><button type="button" class="mok" id="modalOk">儲存</button></div>';
+    modalOverlay.hidden = false;
+    document.getElementById('modalCancel').addEventListener('click', function(){ modalOverlay.hidden = true; });
+    document.getElementById('modalOk').addEventListener('click', function(){
+      var item = document.getElementById('editItem').value.trim();
+      var amount = parseFloat(document.getElementById('editAmount').value);
+      var currency = document.getElementById('editCurrency').value;
+      var payerVal = document.getElementById('editPayer').value;
+      var date = document.getElementById('editDate').value || e.date;
+      if(!item || !isFinite(amount) || amount <= 0) return;
+      var payload = { item: item, amount: amount, currency: currency, date: date };
+      if(isGroup){
+        payload.payerId = payerVal;
+        var checked = [];
+        document.querySelectorAll('#editSplitChips input:checked').forEach(function(cb){ checked.push(cb.value); });
+        if(checked.length === 0) checked = bk.participants.map(function(p){ return p.id; });
+        payload.splitIds = checked;
+      } else {
+        payload.payer = payerVal;
+      }
+      dbApi.collection('books/'+state.currentBookId+'/expenses').doc(e.id).update(payload).catch(function(){ els.statusLine.textContent = '更新失敗，請再試一次。'; });
+      modalOverlay.hidden = true;
+    });
+  }
+
+  function openSettlementEditor(s){
+    modalBox.innerHTML = '<h3>編輯這筆結清</h3>'
+      + '<div class="mrow"><label>金額</label><div style="display:flex;gap:6px;"><input type="number" id="editSAmount" value="'+s.amount+'" style="flex:1"><select id="editSCurrency" style="flex:none;width:74px;">'+CURRENCIES.map(function(c){ return '<option value="'+c.code+'"'+(c.code===(s.currency||'TWD')?' selected':'')+'>'+c.code+'</option>'; }).join('')+'</select></div></div>'
+      + '<div class="mrow"><label>日期</label><input type="date" id="editSDate" value="'+s.date+'"></div>'
+      + '<div class="actions"><button type="button" class="mcancel" id="modalCancel">取消</button><button type="button" class="mok" id="modalOk">儲存</button></div>';
+    modalOverlay.hidden = false;
+    document.getElementById('modalCancel').addEventListener('click', function(){ modalOverlay.hidden = true; });
+    document.getElementById('modalOk').addEventListener('click', function(){
+      var amount = parseFloat(document.getElementById('editSAmount').value);
+      var currency = document.getElementById('editSCurrency').value;
+      var date = document.getElementById('editSDate').value || s.date;
+      if(!isFinite(amount) || amount <= 0) return;
+      dbApi.collection('books/'+state.currentBookId+'/settlements').doc(s.id).update({ amount: amount, currency: currency, date: date }).catch(function(){ els.statusLine.textContent = '更新失敗，請再試一次。'; });
+      modalOverlay.hidden = true;
+    });
+  }
+
+  function askShareExisting(name){
+    return new Promise(function(resolve){
+      modalBox.innerHTML = '<h3>'+escapeHtml(name)+' 要一起分攤目前已經記的支出嗎？</h3>'
+        + '<p style="font-size:.82rem;color:var(--muted);margin:0;">選「先不用」的話，之後可以在下面帳目清單點開單筆記錄，自己選要不要把他加進分攤名單。</p>'
+        + '<div class="actions"><button type="button" class="mcancel" id="modalNo">先不用</button><button type="button" class="mok" id="modalYes">一起分攤</button></div>';
+      modalOverlay.hidden = false;
+      function cleanup(v){ modalOverlay.hidden = true; resolve(v); }
+      document.getElementById('modalNo').addEventListener('click', function(){ cleanup(false); });
+      document.getElementById('modalYes').addEventListener('click', function(){ cleanup(true); });
+    });
+  }
+
+  function shareExistingExpensesWith(participantId){
+    var bk = state.currentBook;
+    var updates = state.expenses.map(function(e){
+      var cur = (e.splitIds && e.splitIds.length) ? e.splitIds.slice() : bk.participants.map(function(p){ return p.id; });
+      if(cur.indexOf(participantId) === -1) cur.push(participantId);
+      return dbApi.collection('books/'+state.currentBookId+'/expenses').doc(e.id).update({ splitIds: cur });
+    });
+    return Promise.all(updates);
+  }
+
+  els.removeParticipant.addEventListener('click', function(){ openRemoveParticipantModal(); });
+
+  function openRemoveParticipantModal(){
+    var bk = state.currentBook;
+    var rows = bk.participants.map(function(p){
+      return '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0;">'
+           + '<span>'+escapeHtml(p.name)+'</span>'
+           + '<button type="button" class="mok mdanger" data-pid="'+p.id+'" style="padding:6px 12px; font-size:.8rem;">刪除</button>'
+           + '</div>';
+    }).join('');
+    modalBox.innerHTML = '<h3>刪除成員</h3><div id="removeList">'+rows+'</div><div class="actions"><button type="button" class="mcancel" id="modalCancel">關閉</button></div>';
+    modalOverlay.hidden = false;
+    document.getElementById('modalCancel').addEventListener('click', function(){ modalOverlay.hidden = true; });
+    modalBox.querySelectorAll('#removeList button[data-pid]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var pid = btn.getAttribute('data-pid');
+        modalOverlay.hidden = true;
+        confirmDeleteParticipant(pid);
+      });
+    });
+  }
+
+  function confirmDeleteParticipant(pid){
+    var bk = state.currentBook;
+    if(bk.participants.length <= 2){
+      modalBox.innerHTML = '<h3>至少要保留 2 位成員</h3><p style="font-size:.85rem;color:var(--muted);margin:0;">多人帳本需要至少 2 個人才能分帳，沒辦法再刪除了。</p><div class="actions"><button type="button" class="mok" id="modalOk">好</button></div>';
+      modalOverlay.hidden = false;
+      document.getElementById('modalOk').addEventListener('click', function(){ modalOverlay.hidden = true; });
+      return;
+    }
+    var name = nameOf(bk, pid);
+    var originalIds = bk.participants.map(function(p){ return p.id; });
+    var payerCount = state.expenses.filter(function(e){ return e.payerId === pid; }).length;
+    var splitCount = state.expenses.filter(function(e){
+      var ids = (e.splitIds && e.splitIds.length) ? e.splitIds : originalIds;
+      return ids.indexOf(pid) > -1;
+    }).length;
+    var detail = [];
+    if(splitCount > 0) detail.push(splitCount+' 筆支出裡他原本要分攤的金額，會自動改由剩下的成員平均分擔');
+    if(payerCount > 0) detail.push('他是 '+payerCount+' 筆支出的付款人，這些記錄會保留但不再列入結算，建議刪除前先點開那幾筆改成別人付的');
+    modalBox.innerHTML = '<h3>確定要刪除「'+escapeHtml(name)+'」嗎？</h3>'
+      + (detail.length
+          ? '<p style="font-size:.82rem;color:var(--muted);margin:0;">'+detail.map(function(t){ return escapeHtml(t); }).join('；')+'。</p>'
+          : '<p style="font-size:.82rem;color:var(--muted);margin:0;">他目前沒有任何支出記錄，可以直接刪除。</p>')
+      + '<div class="actions"><button type="button" class="mcancel" id="modalCancel">取消</button><button type="button" class="mok mdanger" id="modalOk">刪除</button></div>';
+    modalOverlay.hidden = false;
+    document.getElementById('modalCancel').addEventListener('click', function(){ modalOverlay.hidden = true; });
+    document.getElementById('modalOk').addEventListener('click', function(){
+      modalOverlay.hidden = true;
+      performDeleteParticipant(pid);
+    });
+  }
+
+  async function performDeleteParticipant(pid){
+    var bk = state.currentBook;
+    var originalIds = bk.participants.map(function(p){ return p.id; });
+    var updatedParticipants = bk.participants.filter(function(p){ return p.id !== pid; });
+
+    var expenseUpdates = [];
+    state.expenses.forEach(function(e){
+      var ids = (e.splitIds && e.splitIds.length) ? e.splitIds.slice() : originalIds.slice();
+      if(ids.indexOf(pid) === -1) return;
+      var newIds = ids.filter(function(id){ return id !== pid; });
+      if(newIds.length === 0) newIds = updatedParticipants.map(function(p){ return p.id; });
+      expenseUpdates.push(dbApi.collection('books/'+state.currentBookId+'/expenses').doc(e.id).update({ splitIds: newIds }));
+    });
+
+    if(selectedPayerId === pid) selectedPayerId = updatedParticipants[0] ? updatedParticipants[0].id : null;
+    bk.participants = updatedParticipants;
+    renderBook();
+
+    await Promise.all(expenseUpdates).catch(function(){ els.statusLine.textContent = '更新分攤名單時發生問題，請再試一次。'; });
+    await dbApi.collection('books').doc(state.currentBookId).update({ participants: updatedParticipants, updatedAt: Date.now() }).catch(function(){});
+  }
+
+  els.form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var bk = state.currentBook;
+    var item = els.itemInput.value.trim();
+    var amount = parseFloat(els.amountInput.value);
+    var currency = els.currencySelect.value || 'TWD';
+    var date = els.dateInput.value || todayStr();
+    if(!item || !isFinite(amount) || amount <= 0) return;
+
+    if(bk.mode === 'group'){
+      if(!selectedPayerId) return;
+      var splitIds = [];
+      els.splitChips.querySelectorAll('input:checked').forEach(function(cb){ splitIds.push(cb.value); });
+      if(splitIds.length === 0) splitIds = bk.participants.map(function(p){ return p.id; });
+      dbApi.collection('books/'+state.currentBookId+'/expenses').add({
+        item: item, amount: amount, currency: currency, payerId: selectedPayerId, splitIds: splitIds, date: date, createdAt: Date.now()
+      }).catch(function(){ els.statusLine.textContent = '新增失敗，請再試一次。'; });
+    } else {
+      dbApi.collection('books/'+state.currentBookId+'/expenses').add({
+        item: item, amount: amount, currency: currency, payer: selectedPayer, date: date, createdAt: Date.now()
+      }).catch(function(){ els.statusLine.textContent = '新增失敗，請再試一次。'; });
+    }
+    els.itemInput.value = ''; els.amountInput.value = ''; els.itemInput.focus();
+  });
+
+  els.editNames.addEventListener('click', async function(){
+    var bk = state.currentBook;
+    if(bk.mode === 'group'){
+      var updated = [];
+      for(var i=0;i<bk.participants.length;i++){
+        var p = bk.participants[i];
+        var nv = await promptModal('成員名稱（'+(i+1)+'/'+bk.participants.length+'）', p.name);
+        if(nv === null) return;
+        updated.push({ id: p.id, name: nv.trim() || p.name });
+      }
+      bk.participants = updated;
+      renderBook();
+      dbApi.collection('books').doc(state.currentBookId).update({ participants: updated, updatedAt: Date.now() }).catch(function(){});
+    } else {
+      var a = await promptModal('你的名稱', bk.personA);
+      if(a === null) return;
+      var b = await promptModal('朋友的名稱', bk.personB);
+      if(b === null) return;
+      a = a.trim() || bk.personA; b = b.trim() || bk.personB;
+      bk.personA = a; bk.personB = b;
+      renderBook();
+      dbApi.collection('books').doc(state.currentBookId).update({ personA: a, personB: b, updatedAt: Date.now() }).catch(function(){});
+    }
+  });
+
+  els.addParticipant.addEventListener('click', async function(){
+    var bk = state.currentBook;
+    var name = await promptModal('新成員的名稱', '');
+    if(name === null) return;
+    name = name.trim(); if(!name) return;
+    var newParticipant = { id: newId(), name: name };
+    var updated = bk.participants.concat([newParticipant]);
+    bk.participants = updated;
+    renderBook();
+    await dbApi.collection('books').doc(state.currentBookId).update({ participants: updated, updatedAt: Date.now() }).catch(function(){});
+    if(state.expenses.length > 0){
+      var shareAll = await askShareExisting(name);
+      if(shareAll){
+        shareExistingExpensesWith(newParticipant.id).catch(function(){ els.statusLine.textContent = '更新分攤名單時發生問題，請再試一次。'; });
+      }
+    }
+  });
+
+  function renderExportState(){}
+
+  els.deleteBook.addEventListener('click', async function(){
+    var bk = state.currentBook;
+    var ok = await confirmModal('確定要刪除「'+bk.name+'」這本帳本嗎？所有記錄都會一併刪除，無法復原。', '刪除', true);
+    if(!ok) return;
+    var id = state.currentBookId;
+    Promise.all([
+      dbApi.collection('books/'+id+'/expenses').get(),
+      dbApi.collection('books/'+id+'/settlements').get()
+    ]).then(function(results){
+      var deletes = [];
+      results[0].docs.forEach(function(d){ deletes.push(dbApi.collection('books/'+id+'/expenses').doc(d.id).delete()); });
+      results[1].docs.forEach(function(d){ deletes.push(dbApi.collection('books/'+id+'/settlements').doc(d.id).delete()); });
+      return Promise.all(deletes);
+    }).then(function(){ return dbApi.collection('books').doc(id).delete(); })
+      .then(function(){ goHome(); })
+      .catch(function(){ els.statusLine.textContent = '刪除帳本時發生問題，請再試一次。'; });
+  });
+
+  // ---------------- cloud data layer (Firebase Firestore) ----------------
+  var cloudReady = false;
+  var JOINED_KEY = 'ledger.joined.v1';
+
+  function makeFirebaseApi(fdb){
+    var listeners = [];
+    function getJoined(){ try{ var a = JSON.parse(localStorage.getItem(JOINED_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+    function setJoined(a){ try{ localStorage.setItem(JOINED_KEY, JSON.stringify(a)); } catch(e){} listeners.slice().forEach(function(l){ l.resub(); }); }
+    function join(id){ var a = getJoined(); if(a.indexOf(id) < 0){ a.push(id); setJoined(a); } }
+    function leave(id){ setJoined(getJoined().filter(function(x){ return x !== id; })); }
+    // resolve when the server acks, or after a short wait (so the UI never hangs while offline)
+    function soft(p){
+      return new Promise(function(res, rej){
+        var done = false;
+        p.then(function(v){ if(!done){ done = true; res(v); } }, function(e){ if(!done){ done = true; rej(e); } });
+        setTimeout(function(){ if(!done){ done = true; res(); } }, 1500);
+      });
+    }
+    function wrapDoc(ref){
+      return {
+        id: ref.id,
+        get: function(){ return ref.get(); },
+        set: function(d){ return soft(ref.set(d)); },
+        update: function(d){ return soft(ref.update(d)); },
+        delete: function(){ return soft(ref.delete()); }
+      };
+    }
+    function wrapCol(col){
+      return {
+        add: function(data){ var ref = col.doc(); return soft(ref.set(data)).then(function(){ return { id: ref.id }; }); },
+        doc: function(id){ return wrapDoc(col.doc(id)); },
+        get: function(){ return col.get(); },
+        onSnapshot: function(next, err){ return col.onSnapshot(next, err); }
+      };
+    }
+    var ledgers = fdb.collection('ledgers');
+    function booksCollection(){
+      return {
+        add: function(data){
+          var ref = ledgers.doc();
+          join(ref.id);
+          return soft(ref.set(data)).then(function(){ return { id: ref.id }; }, function(e){ leave(ref.id); throw e; });
+        },
+        doc: function(id){
+          var d = wrapDoc(ledgers.doc(id));
+          var del = d.delete;
+          d.delete = function(){ return del().then(function(){ leave(id); }); };
+          return d;
+        },
+        get: function(){
+          return Promise.all(getJoined().map(function(id){ return ledgers.doc(id).get().catch(function(){ return { id: id, exists: false, data: function(){ return null; } }; }); }))
+            .then(function(docs){ docs = docs.filter(function(d){ return d.exists; }); return { docs: docs, size: docs.length, empty: docs.length === 0 }; });
+        },
+        onSnapshot: function(next, err){
+          var unsubs = {}, seen = {};
+          var l = { resub: resub };
+          listeners.push(l);
+          function emit(){
+            var ids = getJoined();
+            for(var i = 0; i < ids.length; i++){ if(!seen[ids[i]]) return; }
+            var docs = ids.map(function(id){ return seen[id]; }).filter(function(d){ return d && d.exists; });
+            next({ docs: docs, size: docs.length, empty: docs.length === 0 });
+          }
+          function resub(){
+            var ids = getJoined();
+            Object.keys(unsubs).forEach(function(id){ if(ids.indexOf(id) < 0){ unsubs[id](); delete unsubs[id]; delete seen[id]; } });
+            ids.forEach(function(id){
+              if(unsubs[id]) return;
+              unsubs[id] = ledgers.doc(id).onSnapshot(function(d){ seen[id] = d; emit(); },
+                function(e){ seen[id] = { id: id, exists: false, data: function(){ return null; } }; emit(); });
+            });
+            emit();
+          }
+          resub();
+          return function(){
+            Object.keys(unsubs).forEach(function(id){ unsubs[id](); });
+            var i = listeners.indexOf(l); if(i > -1) listeners.splice(i, 1);
+          };
+        }
+      };
+    }
+    return {
+      join: join, leave: leave, getJoined: getJoined,
+      ledgers: ledgers, fdb: fdb,
+      collection: function(path){
+        if(path === 'books') return booksCollection();
+        var m = path.match(/^books\/([^\/]+)\/(expenses|settlements)$/);
+        if(m) return wrapCol(ledgers.doc(m[1]).collection(m[2]));
+        return wrapCol(fdb.collection(path));
+      }
+    };
+  }
+
+  // ---------------- share link ----------------
+  function bookUrl(id){ return location.origin + location.pathname + '#' + id; }
+  function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){ return navigator.clipboard.writeText(t); }
+    return new Promise(function(res, rej){
+      try{
+        var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy'); ta.remove(); ok ? res() : rej();
+      } catch(e){ rej(e); }
+    });
+  }
+  els.shareLink.addEventListener('click', async function(){
+    if(!cloudReady){ els.statusLine.textContent = '尚未連線到雲端資料庫，無法產生共編連結（請先完成 firebase-config.js 設定）。'; return; }
+    var bk = state.currentBook; var url = bookUrl(state.currentBookId);
+    if(navigator.share){
+      try{ await navigator.share({ title: '帳本手冊：' + bk.name, text: '一起來記「' + bk.name + '」這本帳', url: url }); return; }
+      catch(e){ if(e && e.name === 'AbortError') return; }
+    }
+    copyText(url).then(function(){ els.statusLine.textContent = '已複製共編連結，貼給朋友就能一起記帳。'; })
+      .catch(function(){ els.statusLine.textContent = '請手動複製連結：' + url; });
+  });
+
+  async function joinFromHash(){
+    var id = (location.hash || '').replace(/^#\/?/, '').trim();
+    if(!id || !/^[A-Za-z0-9]{10,40}$/.test(id) || !cloudReady) return;
+    try{
+      var snap = await dbApi.ledgers.doc(id).get();
+      if(!snap.exists){ setHomeStatus('找不到這本帳本，連結可能已失效或已被刪除。'); history.replaceState(null, '', location.pathname); return; }
+      dbApi.join(id);
+      history.replaceState(null, '', location.pathname);
+      var tries = 0;
+      var t = setInterval(function(){
+        tries++;
+        if(state.books.some(function(b){ return b.id === id; })){ clearInterval(t); openBook(id); }
+        else if(tries > 40){ clearInterval(t); }
+      }, 150);
+    } catch(e){ setHomeStatus('無法加入帳本，請確認網路連線後再開一次連結。'); }
+  }
+  window.addEventListener('hashchange', joinFromHash);
+
+  // ---------------- backup / import ----------------
+  function downloadJson(obj, name){
+    var blob = new Blob([JSON.stringify(obj, null, 1)], { type: 'application/json' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function stripDoc(d){ var v = Object.assign({}, d.data()); return v; }
+  els.backupBtn.addEventListener('click', async function(){
+    if(!state.books.length){ setHomeStatus('目前沒有帳本可以備份。'); return; }
+    setHomeStatus('備份產生中…');
+    try{
+      var out = [];
+      for(var i = 0; i < state.books.length; i++){
+        var bk = state.books[i];
+        var r = await Promise.all([
+          dbApi.collection('books/'+bk.id+'/expenses').get(),
+          dbApi.collection('books/'+bk.id+'/settlements').get()
+        ]);
+        var bd = { mode: bk.mode, name: bk.name, participants: bk.participants, rates: bk.rates, displayCurrency: bk.displayCurrency, createdAt: bk.createdAt };
+        out.push({ book: bd, expenses: r[0].docs.map(stripDoc), settlements: r[1].docs.map(stripDoc) });
+      }
+      downloadJson({ format: 'ledger-backup-v1', exportedAt: Date.now(), books: out }, '帳本備份-' + todayStr() + '.json');
+      setHomeStatus('備份已下載。');
+    } catch(e){ setHomeStatus('備份失敗，請稍後再試。'); }
+  });
+  els.importBtn.addEventListener('click', function(){ els.importFile.value = ''; els.importFile.click(); });
+  els.importFile.addEventListener('change', async function(){
+    var f = els.importFile.files && els.importFile.files[0]; if(!f) return;
+    try{
+      var data = JSON.parse(await f.text());
+      if(!data || data.format !== 'ledger-backup-v1' || !Array.isArray(data.books)) throw new Error('bad');
+      var n = data.books.length;
+      var names = data.books.map(function(b){ return '「' + b.book.name + '」'; }).join('、');
+      var ok = await confirmModal('要匯入 ' + n + ' 本帳本嗎？\n' + names + '\n\n會以新的帳本建立（不會覆蓋現有資料）。', '匯入', false);
+      if(!ok) return;
+      setHomeStatus('匯入中…');
+      var firstId = null;
+      for(var i = 0; i < data.books.length; i++){
+        var item = data.books[i], now = Date.now();
+        var bookData = Object.assign({ balances: {}, totalExpense: 0, createdAt: now }, item.book, { updatedAt: now });
+        var ref = await dbApi.collection('books').add(bookData);
+        if(!firstId) firstId = ref.id;
+        var writes = [];
+        (item.expenses || []).forEach(function(e){ writes.push(dbApi.collection('books/'+ref.id+'/expenses').add(e)); });
+        (item.settlements || []).forEach(function(s){ writes.push(dbApi.collection('books/'+ref.id+'/settlements').add(s)); });
+        await Promise.all(writes);
+      }
+      setHomeStatus('匯入完成。');
+      if(firstId && n === 1){ var t = 0, iv = setInterval(function(){ t++; if(state.books.some(function(b){ return b.id === firstId; })){ clearInterval(iv); openBook(firstId); } else if(t > 40) clearInterval(iv); }, 150); }
+    } catch(e){ setHomeStatus('匯入失敗：檔案格式不正確。'); }
+  });
+
+  // ---------------- init ----------------
+  async function init(){
+    var cfg = window.FIREBASE_CONFIG;
+    var configured = cfg && cfg.apiKey && cfg.projectId && String(cfg.apiKey).indexOf('YOUR') < 0;
+    if(configured && window.firebase){
+      try{
+        firebase.initializeApp(cfg);
+        var fdb = firebase.firestore();
+        try{ await fdb.enablePersistence({ synchronizeTabs: true }); } catch(e){}
+        dbApi = makeFirebaseApi(fdb); cloudReady = true;
+      } catch(e){ dbApi = null; }
+    }
+    if(!dbApi){
+      dbApi = { collection: localCollection };
+      setHomeStatus(configured ? '無法連線到雲端資料庫，資料暫時只會留在這個畫面。' : '尚未設定 Firebase（見 firebase-config.js），目前資料只會留在這個畫面、無法共編。');
+    }
+    renderHome();
+    subscribeBooks();
+    joinFromHash();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
