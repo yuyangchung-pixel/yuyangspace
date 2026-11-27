@@ -266,6 +266,7 @@
     <div id="bookListContainer"></div>
     <p class="status" id="homeStatus"></p>
     <div class="names-edit" style="margin-top:14px">
+      <button type="button" id="joinBtn">加入帳本</button>
       <button type="button" id="backupBtn">匯出備份</button>
       <button type="button" id="importBtn">匯入備份</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden>
@@ -536,6 +537,7 @@
     addParticipant: document.getElementById('addParticipant'),
     removeParticipant: document.getElementById('removeParticipant'),
     shareLink: document.getElementById('shareLink'),
+    joinBtn: document.getElementById('joinBtn'),
     backupBtn: document.getElementById('backupBtn'),
     importBtn: document.getElementById('importBtn'),
     importFile: document.getElementById('importFile'),
@@ -1456,22 +1458,34 @@
       .catch(function(){ els.statusLine.textContent = '請手動複製連結：' + url; });
   });
 
-  async function joinFromHash(){
-    var id = (location.hash || '').replace(/^#\/?/, '').trim();
-    if(!id || !/^[A-Za-z0-9]{10,40}$/.test(id) || !cloudReady) return;
+  async function joinById(id){
+    id = (id || '').trim();
+    var m = id.match(/#\/?([A-Za-z0-9]{10,40})\s*$/);
+    if(m) id = m[1];
+    if(!id || !/^[A-Za-z0-9]{10,40}$/.test(id) || !cloudReady){ setHomeStatus('連結格式不正確，請貼上完整的共編連結。'); return; }
     try{
       var snap = await dbApi.ledgers.doc(id).get();
-      if(!snap.exists){ setHomeStatus('找不到這本帳本，連結可能已失效或已被刪除。'); history.replaceState(null, '', location.pathname); return; }
+      if(!snap.exists){ setHomeStatus('找不到這本帳本，連結可能已失效或已被刪除。'); return; }
       dbApi.join(id);
-      history.replaceState(null, '', location.pathname);
+      setHomeStatus('');
       var tries = 0;
       var t = setInterval(function(){
         tries++;
         if(state.books.some(function(b){ return b.id === id; })){ clearInterval(t); openBook(id); }
         else if(tries > 40){ clearInterval(t); }
       }, 150);
-    } catch(e){ setHomeStatus('無法加入帳本，請確認網路連線後再開一次連結。'); }
+    } catch(e){ setHomeStatus('無法加入帳本，請確認網路連線後再試一次。'); }
   }
+  async function joinFromHash(){
+    var id = (location.hash || '').replace(/^#\/?/, '').trim();
+    if(!id) return;
+    history.replaceState(null, '', location.pathname);
+    joinById(id);
+  }
+  els.joinBtn.addEventListener('click', async function(){
+    var v = await promptModal('貼上朋友給你的共編連結', '');
+    if(v) joinById(v);
+  });
   window.addEventListener('hashchange', joinFromHash);
 
   // ---------------- backup / import ----------------
